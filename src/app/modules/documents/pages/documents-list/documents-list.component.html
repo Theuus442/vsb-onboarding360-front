@@ -1,0 +1,266 @@
+<app-layout>
+  <div class="documents-management-container">
+    <!-- Hero Header -->
+    <div class="hero-header">
+      <div class="hero-content">
+        <div class="hero-title-section">
+          <div class="hero-icon">
+            <i class="pi pi-file"></i>
+          </div>
+          <div class="hero-text">
+            <h1 class="hero-title">Gerenciamento de Documentos</h1>
+            <p class="hero-subtitle">Gerencie todos os documentos do sistema</p>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="action-button primary" (click)="abrirModalUpload()">
+            <i class="pi pi-upload"></i>
+            <span>Upload de Documento</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon"></i>
+          <app-input-busca
+            placeholder="Pesquisar documentos por nome ou parceiro"
+            [value]="pesquisaDocumentos()"
+            (busca)="onPesquisar($event)">
+          </app-input-busca>
+        </div>
+        <button
+          class="filters-toggle-btn"
+          (click)="toggleFiltrosAvancados()"
+          [class.active]="filtrosAvancadosVisiveis()">
+          <i class="pi pi-filter"></i>
+          <span>Filtros</span>
+          <i class="pi" [class.pi-chevron-down]="!filtrosAvancadosVisiveis()"
+                        [class.pi-chevron-up]="filtrosAvancadosVisiveis()"></i>
+        </button>
+      </div>
+
+      <!-- Advanced Filters -->
+      @if (filtrosAvancadosVisiveis()) {
+        <div class="advanced-filters">
+          <div class="filters-grid">
+            <div class="filter-group">
+              <label class="filter-label">Status</label>
+              <p-dropdown
+                [options]="opcoesStatus"
+                [(ngModel)]="filtroStatus"
+                placeholder="Todos os status"
+                [showClear]="true"
+                (onChange)="aplicarFiltros()"
+                styleClass="filter-dropdown">
+              </p-dropdown>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Tipo de Documento</label>
+              <p-dropdown
+                [options]="opcoesTipos"
+                [(ngModel)]="filtroTipo"
+                placeholder="Todos os tipos"
+                [showClear]="true"
+                (onChange)="aplicarFiltros()"
+                styleClass="filter-dropdown">
+              </p-dropdown>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Parceiro</label>
+              <p-dropdown
+                [options]="opcoesParceiros()"
+                [(ngModel)]="filtroParceiro"
+                placeholder="Todos os parceiros"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="label"
+                (onChange)="aplicarFiltros()"
+                styleClass="filter-dropdown">
+              </p-dropdown>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Vencimento</label>
+              <p-dropdown
+                [options]="opcoesVencimento"
+                [(ngModel)]="filtroVencimento"
+                placeholder="Todas as situações"
+                [showClear]="true"
+                (onChange)="aplicarFiltros()"
+                styleClass="filter-dropdown">
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="filters-actions">
+            <button
+              class="clear-filters-btn"
+              (click)="limparFiltros()"
+              [disabled]="!temFiltrosAtivos()">
+              <i class="pi pi-times"></i>
+              Limpar Filtros
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Loading State -->
+    @if (carregando()) {
+      <div class="loading-container">
+        <app-carregando
+          message="Carregando documentos..."
+          size="40px">
+        </app-carregando>
+      </div>
+    }
+
+    <!-- Documents Grid -->
+    @if (!carregando()) {
+      <div class="documents-grid">
+        @if (documentos().length > 0) {
+          @for (documento of documentos(); track documento.id; let i = $index) {
+            <div class="document-card" [style.animation-delay]="(i * 100) + 'ms'">
+              <div class="document-card-header">
+                <div class="document-icon">
+                  <i class="pi pi-file-pdf" *ngIf="getFileIcon(documento.arquivo_nome) === 'pdf'"></i>
+                  <i class="pi pi-file-word" *ngIf="getFileIcon(documento.arquivo_nome) === 'word'"></i>
+                  <i class="pi pi-file-excel" *ngIf="getFileIcon(documento.arquivo_nome) === 'excel'"></i>
+                  <i class="pi pi-file" *ngIf="getFileIcon(documento.arquivo_nome) === 'file'"></i>
+                </div>
+                <div class="document-info">
+                  <h3 class="document-name">{{ documento.nome }}</h3>
+                  <p class="document-filename">{{ documento.arquivo_nome }}</p>
+                </div>
+                <div class="document-actions">
+                  <button class="card-action-btn"
+                          (click)="visualizarDocumento(documento)"
+                          title="Visualizar documento">
+                    <i class="pi pi-eye"></i>
+                  </button>
+                  @if (documento.status === 'pendente' || documento.status === 'em_analise') {
+                    <button class="card-action-btn approve"
+                            (click)="aprovarDocumento(documento)"
+                            title="Aprovar documento">
+                      <i class="pi pi-check"></i>
+                    </button>
+                    <button class="card-action-btn reject"
+                            (click)="rejeitarDocumento(documento)"
+                            title="Rejeitar documento">
+                      <i class="pi pi-times"></i>
+                    </button>
+                  }
+                  <button class="card-action-btn more"
+                          (click)="toggleMenuMais($event, documento)"
+                          title="Mais opções">
+                    <i class="pi pi-ellipsis-v"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="document-card-body">
+                <div class="document-detail">
+                  <span class="detail-label">Status</span>
+                  <span class="status-badge" [class]="'status-' + documento.status">
+                    {{ getStatusLabel(documento.status) }}
+                  </span>
+                </div>
+
+                <div class="document-detail">
+                  <span class="detail-label">Tipo</span>
+                  <span class="detail-value">{{ getTipoLabel(documento.tipo) }}</span>
+                </div>
+
+                <div class="document-detail">
+                  <span class="detail-label">Parceiro</span>
+                  <span class="detail-value">{{ documento.parceiro_nome }}</span>
+                </div>
+
+                <div class="document-detail">
+                  <span class="detail-label">Data Upload</span>
+                  <span class="detail-value upload-date">
+                    <i class="pi pi-calendar"></i>
+                    {{ formatarData(documento.data_upload) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Floating Menu -->
+              @if (menuAbertoId() === documento.id) {
+                <div class="floating-menu" (click)="$event.stopPropagation()">
+                  <button
+                    class="menu-item"
+                    (click)="downloadDocumento(documento)">
+                    <i class="pi pi-download"></i>
+                    <span>Download</span>
+                  </button>
+                  <div class="menu-separator"></div>
+                  <button
+                    class="menu-item danger"
+                    (click)="confirmarExclusao(documento)">
+                    <i class="pi pi-trash"></i>
+                    <span>Excluir</span>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <div class="empty-state-content">
+              <div class="empty-icon">
+                <i class="pi pi-file"></i>
+              </div>
+              <h3 class="empty-title">Nenhum documento encontrado</h3>
+              @if (pesquisaDocumentos()) {
+                <p class="empty-description">
+                  Não encontramos documentos com o termo "{{ pesquisaDocumentos() }}"
+                </p>
+                <button class="empty-action-btn" (click)="onPesquisar('')">
+                  <i class="pi pi-times"></i>
+                  Limpar busca
+                </button>
+              } @else {
+                <p class="empty-description">
+                  Comece fazendo o upload do primeiro documento
+                </p>
+                <button class="empty-action-btn primary" (click)="abrirModalUpload()">
+                  <i class="pi pi-upload"></i>
+                  Fazer primeiro upload
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Pagination -->
+    @if (mostrarPaginacao()) {
+      <div class="pagination-container">
+        <app-paginacao
+          [paginaAtual]="paginaAtual()"
+          [itensPorPagina]="itensPorPagina()"
+          [totalItens]="totalItens()"
+          [labelItem]="'documentos'"
+          (mudancaPagina)="onMudarPagina($event)">
+        </app-paginacao>
+      </div>
+    }
+  </div>
+
+  <!-- Modal de Upload -->
+  <app-upload-modal
+    [(visible)]="modalUploadVisivel"
+    (documentoUpload)="onDocumentoUpload($event)">
+  </app-upload-modal>
+
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+</app-layout>

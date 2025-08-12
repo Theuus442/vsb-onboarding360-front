@@ -1,0 +1,318 @@
+<app-layout>
+  <div class="documents-management">
+    <!-- Hero Header with Stats -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-icon">
+            <i class="pi pi-file-o"></i>
+          </div>
+          <div class="hero-title-group">
+            <h1 class="hero-title">Documentos</h1>
+            <p class="hero-subtitle">Gerencie e monitore todos os documentos do sistema</p>
+          </div>
+        </div>
+        
+        <div class="hero-stats">
+          <div class="stat-card total">
+            <div class="stat-icon">
+              <i class="pi pi-file"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ totalItens() }}</div>
+              <div class="stat-label">Total</div>
+            </div>
+          </div>
+          <div class="stat-card pending">
+            <div class="stat-icon">
+              <i class="pi pi-clock"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ countByStatus('pendente') }}</div>
+              <div class="stat-label">Pendentes</div>
+            </div>
+          </div>
+          <div class="stat-card approved">
+            <div class="stat-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ countByStatus('aprovado') }}</div>
+              <div class="stat-label">Aprovados</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="hero-actions">
+          <button class="action-btn primary" (click)="abrirModalUpload()">
+            <i class="pi pi-upload"></i>
+            <span>Upload Documento</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="controls-section">
+      <div class="controls-container">
+        <!-- Search and Filters -->
+        <div class="search-filters">
+          <div class="search-wrapper">
+            <div class="search-icon">
+              <i class="pi pi-search"></i>
+            </div>
+            <app-campo-busca
+              placeholder="Pesquisar por nome, tipo ou parceiro..."
+              [placeholder]="'Pesquisar documentos...'"
+              (buscarChange)="onPesquisar($event)"
+              class="search-input">
+            </app-campo-busca>
+            @if (temFiltrosAtivos()) {
+              <button class="clear-filters-btn" (click)="limparFiltros()" title="Limpar filtros">
+                <i class="pi pi-times"></i>
+              </button>
+            }
+          </div>
+
+          <div class="filter-controls">
+            <div class="filter-dropdown">
+              <p-dropdown
+                [(ngModel)]="filtroStatus"
+                [options]="opcoesStatus"
+                placeholder="Status"
+                [showClear]="true"
+                (onChange)="aplicarFiltros()"
+                styleClass="filter-select"
+                appendTo="body">
+              </p-dropdown>
+            </div>
+            
+            <div class="filter-dropdown">
+              <p-dropdown
+                [(ngModel)]="filtroTipo"
+                [options]="opcoesTipos"
+                placeholder="Tipo"
+                [showClear]="true"
+                (onChange)="aplicarFiltros()"
+                styleClass="filter-select"
+                appendTo="body">
+              </p-dropdown>
+            </div>
+            
+            <button class="filters-toggle-btn" 
+                    (click)="toggleFiltrosAvancados()"
+                    [class.active]="filtrosAvancadosVisiveis()">
+              <i class="pi pi-filter"></i>
+              <span>Filtros</span>
+              @if (temFiltrosAtivos()) {
+                <span class="filter-badge">{{ getActiveFiltersCount() }}</span>
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Filters -->
+      @if (filtrosAvancadosVisiveis()) {
+        <div class="advanced-filters">
+          <div class="filters-grid">
+            <div class="filter-group">
+              <label class="filter-label">Parceiro</label>
+              <p-dropdown
+                [(ngModel)]="filtroParceiro"
+                [options]="opcoesParceiros()"
+                placeholder="Todos os parceiros"
+                [showClear]="true"
+                styleClass="advanced-filter-select"
+                appendTo="body">
+              </p-dropdown>
+            </div>
+            
+            <div class="filter-group">
+              <label class="filter-label">Vencimento</label>
+              <p-dropdown
+                [(ngModel)]="filtroVencimento"
+                [options]="opcoesVencimento"
+                placeholder="Qualquer vencimento"
+                [showClear]="true"
+                styleClass="advanced-filter-select"
+                appendTo="body">
+              </p-dropdown>
+            </div>
+          </div>
+          
+          <div class="filters-actions">
+            <button class="action-btn secondary" (click)="limparFiltros()">
+              <i class="pi pi-times"></i>
+              <span>Limpar</span>
+            </button>
+            <button class="action-btn primary" (click)="aplicarFiltros()">
+              <i class="pi pi-check"></i>
+              <span>Aplicar</span>
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+      <!-- Loading State -->
+      @if (carregando()) {
+        <div class="loading-section">
+          @for (item of [1,2,3,4,5,6]; track item) {
+            <div class="skeleton-card">
+              <p-skeleton height="120px" borderRadius="1rem"></p-skeleton>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Documents Grid -->
+      @if (!carregando()) {
+        @if (documentos().length > 0) {
+          <div class="documents-grid">
+            @for (documento of documentos(); track documento.id; let i = $index) {
+              <div class="document-card" [style.animation-delay]="(i * 100) + 'ms'">
+                <div class="card-header">
+                  <div class="document-icon" [ngClass]="getFileIconClass(documento.nome)">
+                    <i class="pi" [ngClass]="getFileIcon(documento.nome)"></i>
+                  </div>
+                  
+                  <div class="document-status-badge">
+                    <app-tag-status 
+                      [status]="getStatusParaTag(documento.status)" 
+                      tipo="documento">
+                    </app-tag-status>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <h3 class="document-name" [title]="documento.nome">{{ documento.nome }}</h3>
+                  
+                  <div class="document-meta">
+                    <div class="meta-item">
+                      <i class="pi pi-tag"></i>
+                      <span>{{ getTipoLabel(documento.tipo) }}</span>
+                    </div>
+                    @if (documento.parceiro) {
+                      <div class="meta-item">
+                        <i class="pi pi-building"></i>
+                        <span>{{ documento.parceiro }}</span>
+                      </div>
+                    }
+                    <div class="meta-item">
+                      <i class="pi pi-calendar"></i>
+                      <span>{{ formatarData(documento.created_at) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-footer">
+                  <div class="action-buttons">
+                    <button class="action-icon-btn" 
+                            (click)="visualizarDocumento(documento)"
+                            title="Visualizar documento">
+                      <i class="pi pi-eye"></i>
+                    </button>
+                    <button class="action-icon-btn" 
+                            (click)="downloadDocumento(documento)"
+                            title="Baixar documento">
+                      <i class="pi pi-download"></i>
+                    </button>
+                    @if (documento.status === 'pendente' || documento.status === 'em_analise') {
+                      <button class="action-icon-btn success" 
+                              (click)="aprovarDocumento(documento)"
+                              title="Aprovar documento">
+                        <i class="pi pi-check"></i>
+                      </button>
+                      <button class="action-icon-btn warning" 
+                              (click)="rejeitarDocumento(documento)"
+                              title="Rejeitar documento">
+                        <i class="pi pi-times"></i>
+                      </button>
+                    }
+                    <button class="action-icon-btn danger" 
+                            (click)="confirmarExclusao(documento)"
+                            title="Excluir documento">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- Empty State -->
+          <div class="empty-state">
+            <div class="empty-content">
+              <div class="empty-icon">
+                @if (temFiltrosAtivos()) {
+                  <i class="pi pi-filter"></i>
+                } @else {
+                  <i class="pi pi-file-o"></i>
+                }
+              </div>
+              <h3 class="empty-title">
+                @if (temFiltrosAtivos()) {
+                  Nenhum documento encontrado
+                } @else {
+                  Nenhum documento cadastrado
+                }
+              </h3>
+              <p class="empty-description">
+                @if (temFiltrosAtivos()) {
+                  Não encontramos documentos que correspondam aos filtros aplicados.
+                } @else {
+                  Comece fazendo upload do primeiro documento ao sistema.
+                }
+              </p>
+              <div class="empty-actions">
+                @if (temFiltrosAtivos()) {
+                  <button class="action-btn secondary" (click)="limparFiltros()">
+                    <i class="pi pi-filter-slash"></i>
+                    <span>Limpar Filtros</span>
+                  </button>
+                }
+                <button class="action-btn primary" (click)="abrirModalUpload()">
+                  <i class="pi pi-upload"></i>
+                  <span>Upload Documento</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Pagination -->
+      @if (!carregando() && mostrarPaginacao()) {
+        <div class="pagination-section">
+          <app-paginacao
+            [paginaAtual]="paginaAtual()"
+            [totalItens]="totalItens()"
+            [itensPorPagina]="itensPorPagina()"
+            (mudancaPagina)="onMudarPagina($event)">
+          </app-paginacao>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Upload Modal -->
+  <app-modal-upload
+    [(visivel)]="modalUploadVisivel"
+    (documentoEnviado)="onDocumentoUpload($event)">
+  </app-modal-upload>
+
+  <!-- Dialogs -->
+  <p-confirmDialog 
+    [style]="{width: '450px'}"
+    [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text">
+  </p-confirmDialog>
+  
+  <p-toast 
+    [showTransitionOptions]="'300ms ease-out'"
+    [hideTransitionOptions]="'250ms ease-in'">
+  </p-toast>
+</app-layout>
