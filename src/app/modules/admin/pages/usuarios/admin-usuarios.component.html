@@ -1,0 +1,141 @@
+<app-layout>
+  <div class="users-management-content">
+    
+    <!-- Hero Header -->
+    <div class="hero-header">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <i class="pi pi-users hero-icon"></i>
+            Gerenciamento de Usuários
+          </h1>
+          <p class="hero-subtitle">Administre todos os usuários do sistema com facilidade</p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn-primary" (click)="novoUsuario()">
+            <i class="pi pi-user-plus"></i>
+            <span>Novo Usuário</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon"></i>
+          <app-search-input
+            placeholder="Buscar por nome, email ou departamento..."
+            [value]="pesquisaUsuarios()"
+            (search)="onSearch($event)">
+          </app-search-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-container">
+        <div class="loading-card">
+          <app-loading
+            message="Carregando usuários..."
+            size="40px">
+          </app-loading>
+        </div>
+      </div>
+    }
+
+    <!-- Users Grid -->
+    @if (!loading()) {
+      <div class="users-grid">
+        @for (usuario of usuarios(); track usuario.id) {
+          <div class="user-card">
+            <div class="user-card-header">
+              <div class="user-avatar">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="user-actions">
+                <p-menu #menu [model]="getMenuItems(usuario)" [popup]="true"></p-menu>
+                <button 
+                  class="action-menu-btn"
+                  (click)="toggleMenu($event, usuario)">
+                  <i class="pi pi-ellipsis-v"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="user-card-body">
+              <h3 class="user-name">{{ usuario.nome }}</h3>
+              <p class="user-email">{{ usuario.email }}</p>
+              
+              <div class="user-details">
+                <div class="user-detail-item">
+                  <span class="detail-label">Papel:</span>
+                  <span class="detail-value role-badge" [class]="'role-' + usuario.papel">
+                    {{ getRoleLabel(usuario.papel) }}
+                  </span>
+                </div>
+                
+                <div class="user-detail-item">
+                  <span class="detail-label">Departamento:</span>
+                  <span class="detail-value">{{ usuario.departamento }}</span>
+                </div>
+                
+                <div class="user-detail-item">
+                  <span class="detail-label">Status:</span>
+                  <app-status-tag [status]="usuario.status || 'ativo'" type="usuario"></app-status-tag>
+                </div>
+              </div>
+            </div>
+            
+            <div class="user-card-footer">
+              <span class="user-joined">
+                <i class="pi pi-calendar"></i>
+                Criado em {{ usuario.created_at | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <div class="empty-state-content">
+              <div class="empty-icon">
+                <i class="pi pi-users"></i>
+              </div>
+              <h3 class="empty-title">Nenhum usuário encontrado</h3>
+              <p class="empty-message">
+                @if (pesquisaUsuarios()) {
+                  Não encontramos usuários que correspondam à sua busca.
+                } @else {
+                  Comece criando o primeiro usuário do sistema.
+                }
+              </p>
+              @if (!pesquisaUsuarios()) {
+                <button class="btn-primary" (click)="novoUsuario()">
+                  <i class="pi pi-plus"></i>
+                  Criar Primeiro Usuário
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Pagination -->
+    @if (!loading() && totalItems() > 0) {
+      <div class="pagination-container">
+        <app-pagination
+          [currentPage]="paginaAtual()"
+          [itemsPerPage]="itensPorPagina()"
+          [totalItems]="totalItems()"
+          [itemsLabel]="'usuários'"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    }
+
+  </div>
+
+  <p-toast></p-toast>
+</app-layout>
