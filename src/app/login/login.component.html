@@ -1,0 +1,166 @@
+<div class="login-screen">
+  <!-- Background with animated shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="floating-particles">
+      <div class="particle" *ngFor="let particle of particles; let i = index" 
+           [style.animation-delay]="i * 0.2 + 's'"></div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="login-container">
+    <!-- Left side - Welcome content -->
+    <div class="welcome-section">
+      <div class="welcome-content">
+        <div class="logo-section">
+          <div class="logo-wrapper">
+            <img src="images/VSbLogo.png" alt="VSB Logo" class="logo" />
+          </div>
+          <h1 class="brand-name">VSB Onboard360</h1>
+          <div class="brand-tagline">Transformando o onboarding de parceiros</div>
+        </div>
+        
+        <div class="features-list">
+          <div class="feature-item" *ngFor="let feature of features; let i = index" 
+               [style.animation-delay]="0.3 + i * 0.1 + 's'">
+            <div class="feature-icon">
+              <i [class]="feature.icon"></i>
+            </div>
+            <div class="feature-text">
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right side - Login form -->
+    <div class="form-section">
+      <div class="form-container">
+        <div class="form-header">
+          <h2 class="form-title">Bem-vindo de volta!</h2>
+          <p class="form-subtitle">Faça login para acessar sua conta</p>
+        </div>
+
+        <form (ngSubmit)="onLogin()" class="login-form" #loginForm="ngForm">
+          <!-- Email field -->
+          <div class="input-group" [class.has-value]="email()" [class.has-error]="showEmailError()">
+            <label for="email" class="input-label">E-mail</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <i class="pi pi-envelope"></i>
+              </div>
+              <input 
+                id="email" 
+                type="email" 
+                #emailInput
+                [ngModel]="email()" 
+                (ngModelChange)="email.set($event)"
+                (blur)="validateEmail()"
+                (focus)="clearEmailError()"
+                name="email"
+                placeholder="seu.email@empresa.com"
+                autocomplete="email"
+                required 
+                class="form-input" />
+              <div class="input-validation" *ngIf="showEmailError()">
+                <i class="pi pi-exclamation-triangle"></i>
+              </div>
+            </div>
+            <small class="error-message" *ngIf="showEmailError()">{{ emailErrorMessage() }}</small>
+          </div>
+
+          <!-- Password field -->
+          <div class="input-group" [class.has-value]="password()" [class.has-error]="showPasswordError()">
+            <label for="password" class="input-label">Senha</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <i class="pi pi-lock"></i>
+              </div>
+              <input 
+                id="password" 
+                [type]="showPassword() ? 'text' : 'password'"
+                #passwordInput
+                [ngModel]="password()" 
+                (ngModelChange)="password.set($event)"
+                (blur)="validatePassword()"
+                (focus)="clearPasswordError()"
+                name="password"
+                placeholder="Digite sua senha"
+                autocomplete="current-password"
+                required 
+                class="form-input" />
+              <button 
+                type="button" 
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
+            <small class="error-message" *ngIf="showPasswordError()">{{ passwordErrorMessage() }}</small>
+          </div>
+
+          <!-- Remember me and forgot password -->
+          <div class="form-options">
+            <label class="checkbox-wrapper">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="rememberMe" 
+                name="rememberMe"
+                class="checkbox-input">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-label">Lembrar de mim</span>
+            </label>
+            <button 
+              type="button" 
+              class="forgot-password-link"
+              (click)="onForgotPassword()">
+              Esqueci minha senha
+            </button>
+          </div>
+
+          <!-- Submit button -->
+          <button 
+            type="submit" 
+            class="submit-button"
+            [disabled]="loading() || !isFormValid()"
+            [class.loading]="loading()">
+            <span class="button-content" [class.hidden]="loading()">
+              <i class="pi pi-sign-in"></i>
+              Entrar
+            </span>
+            <div class="button-loader" [class.visible]="loading()">
+              <div class="spinner"></div>
+              <span>Entrando...</span>
+            </div>
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidade</a>
+          <span class="separator">•</span>
+          <a href="#" class="footer-link">Termos de Uso</a>
+          <span class="separator">•</span>
+          <a href="#" class="footer-link">Suporte</a>
+        </div>
+        <div class="copyright">
+          © 2025 VSB Onboard360. Todos os direitos reservados.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <p-toast position="top-right" />
+</div>
