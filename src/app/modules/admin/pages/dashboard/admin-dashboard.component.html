@@ -1,0 +1,68 @@
+<app-layout>
+  <div class="dashboard-content">
+    
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Dashboard Administrativo</h1>
+      <p class="page-subtitle">Visão geral completa do sistema de onboarding</p>
+    </div>
+
+    <!-- Statistics Section -->
+    <section class="stats-section" aria-labelledby="stats-heading">
+      <div class="section-header">
+        <h2 id="stats-heading" class="section-title">Estatísticas Principais</h2>
+        <p class="section-subtitle">Métricas em tempo real do seu sistema</p>
+      </div>
+      <app-statistics-grid [statistics]="estatisticas()"></app-statistics-grid>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      
+      <!-- Left Column -->
+      <div class="left-column">
+        
+        <!-- Activities Section -->
+        <section class="activities-section">
+          <app-activities-list [activities]="atividadesRecentes()"></app-activities-list>
+        </section>
+        
+        <!-- Integration Status Section -->
+        <section class="integration-section">
+          <app-integration-status [statusData]="statusIntegracao()"></app-integration-status>
+        </section>
+        
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        
+        <!-- Documents Section -->
+        <section class="documents-section">
+          <app-documents-table 
+            [documents]="documentosPendentes()"
+            (viewAllDocuments)="verTodosDocumentos()">
+          </app-documents-table>
+        </section>
+        
+      </div>
+      
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Quick Access Section -->
+    <section class="quick-access-section" aria-labelledby="quick-access-heading">
+      <div class="section-header">
+        <h2 id="quick-access-heading" class="section-title">Acesso Rápido</h2>
+        <p class="section-subtitle">Ações frequentes para maior produtividade</p>
+      </div>
+      <app-quick-access 
+        [quickAccessItems]="acessoRapido()"
+        (itemClick)="onAcessoRapidoClick($event)">
+      </app-quick-access>
+    </section>
+
+  </div>
+</app-layout>
