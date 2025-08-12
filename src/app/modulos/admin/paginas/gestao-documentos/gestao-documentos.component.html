@@ -1,0 +1,278 @@
+<app-layout>
+  <div class="documents-hub">
+    
+    <!-- Modern Header -->
+    <header class="hub-header">
+      <div class="header-content">
+        <div class="header-main">
+          <div class="title-section">
+            <div class="icon-container">
+              <i class="pi pi-folder-open"></i>
+              <div class="icon-glow"></div>
+            </div>
+            <div class="title-group">
+              <h1 class="main-title">Gestão de Documentos</h1>
+              <p class="subtitle">Monitore e gerencie a documentação de todas as empresas</p>
+            </div>
+          </div>
+          
+          <!-- Statistics Cards -->
+          <div class="stats-grid">
+            <div class="stat-card success">
+              <div class="stat-icon">
+                <i class="pi pi-check-circle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-number">{{ empresasCompletas() }}</div>
+                <div class="stat-label">Completas</div>
+              </div>
+            </div>
+
+            <div class="stat-card warning">
+              <div class="stat-icon">
+                <i class="pi pi-clock"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-number">{{ empresasComPendencias() }}</div>
+                <div class="stat-label">Pendências</div>
+              </div>
+            </div>
+
+            <div class="stat-card danger">
+              <div class="stat-icon">
+                <i class="pi pi-exclamation-triangle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-number">{{ empresasComExpirados() }}</div>
+                <div class="stat-label">Expirados</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Control Panel -->
+    <section class="control-panel">
+      <div class="panel-content">
+        <div class="search-section">
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <i class="pi pi-search search-icon"></i>
+              <app-input-busca
+                placeholder="Buscar por nome, CNPJ ou email..."
+                (buscarChange)="onSearch($event)"
+                class="modern-search">
+              </app-input-busca>
+            </div>
+          </div>
+          
+          <div class="filters-section">
+            <div class="filter-item">
+              <label class="filter-label">Status da Documentação</label>
+              <p-dropdown
+                [(ngModel)]="filtroStatus"
+                (ngModelChange)="onStatusFilterChange()"
+                [options]="opcoesStatus"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="modern-dropdown"
+                appendTo="body"
+                [showClear]="true"
+                placeholder="Status da Documentação">
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions-section">
+          <button 
+            class="action-btn secondary"
+            (click)="refreshData()"
+            [disabled]="loading()">
+            <i class="pi pi-refresh"></i>
+            <span>Atualizar</span>
+          </button>
+          
+          <button 
+            class="action-btn secondary"
+            (click)="limparFiltros()"
+            [disabled]="loading()">
+            <i class="pi pi-filter-slash"></i>
+            <span>Limpar Filtros</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <main class="content-area">
+      
+      <!-- Loading State -->
+      @if (loading()) {
+        <div class="loading-state">
+          <div class="loading-animation">
+            <div class="spinner"></div>
+            <p>Carregando empresas...</p>
+          </div>
+        </div>
+      }
+      
+      <!-- Companies Grid -->
+      @if (!loading() && empresas().length > 0) {
+        <div class="companies-grid">
+          @for (empresa of empresas(); track empresa.id) {
+            <div class="company-card">
+              
+              <!-- Card Header -->
+              <div class="card-header">
+                <div class="company-info">
+                  <div class="company-avatar">
+                    <span>{{ empresa.nome.charAt(0).toUpperCase() }}</span>
+                  </div>
+                  <div class="company-details">
+                    <h3 class="company-name">{{ empresa.nome }}</h3>
+                    <p class="company-cnpj">{{ empresa.cnpj }}</p>
+                    <p class="company-email">{{ empresa.email }}</p>
+                  </div>
+                </div>
+                
+                <div class="company-status">
+                  <p-tag 
+                    [value]="empresa.status" 
+                    [severity]="empresa.status === 'ativo' ? 'success' : 'danger'"
+                    styleClass="status-tag">
+                  </p-tag>
+                </div>
+              </div>
+
+              <!-- Progress Section -->
+              <div class="progress-section">
+                <div class="progress-header">
+                  <span class="progress-label">Documentação</span>
+                  <span class="progress-percentage">{{ empresa.estatisticas.percentualCompleto }}%</span>
+                </div>
+                <p-progressBar
+                  [value]="empresa.estatisticas.percentualCompleto"
+                  styleClass="progress-bar">
+                </p-progressBar>
+              </div>
+
+              <!-- Statistics -->
+              <div class="stats-row">
+                <div class="stat-item success">
+                  <i class="pi pi-check-circle"></i>
+                  <span class="stat-value">{{ empresa.estatisticas.aprovados }}</span>
+                  <span class="stat-label">Aprovados</span>
+                </div>
+                
+                <div class="stat-item warning">
+                  <i class="pi pi-clock"></i>
+                  <span class="stat-value">{{ empresa.estatisticas.pendentes }}</span>
+                  <span class="stat-label">Pendentes</span>
+                </div>
+                
+                @if (empresa.estatisticas.rejeitados > 0) {
+                  <div class="stat-item danger">
+                    <i class="pi pi-times-circle"></i>
+                    <span class="stat-value">{{ empresa.estatisticas.rejeitados }}</span>
+                    <span class="stat-label">Rejeitados</span>
+                  </div>
+                }
+                
+                @if (empresa.estatisticas.expirados > 0) {
+                  <div class="stat-item danger">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    <span class="stat-value">{{ empresa.estatisticas.expirados }}</span>
+                    <span class="stat-label">Expirados</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Documents List -->
+              <div class="documents-section">
+                <h4 class="documents-title">Documentos</h4>
+                <div class="documents-list">
+                  @for (documento of empresa.documentos; track documento.id) {
+                    <div class="document-item">
+                      <div class="document-info">
+                        <i class="pi pi-file-pdf document-icon"></i>
+                        <div class="document-details">
+                          <span class="document-name">{{ getTipoLabel(documento.tipo) }}</span>
+                          @if (documento.data_vencimento) {
+                            <small class="document-expiry">
+                              Vence em: {{ formatDate(documento.data_vencimento) }}
+                            </small>
+                          }
+                        </div>
+                      </div>
+                      <p-tag 
+                        [value]="getStatusLabel(documento.status)"
+                        [severity]="getStatusSeverity(documento.status)"
+                        styleClass="document-status">
+                      </p-tag>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Card Footer -->
+              <div class="card-footer">
+                <div class="footer-info">
+                  <small class="last-update">
+                    <i class="pi pi-clock"></i>
+                    Atualizado em {{ formatDate(empresa.ultimaAtualizacao) }}
+                  </small>
+                  @if (empresa.responsavel) {
+                    <small class="responsible">
+                      <i class="pi pi-user"></i>
+                      {{ empresa.responsavel }}
+                    </small>
+                  }
+                </div>
+                
+                <div class="footer-actions">
+                  <button 
+                    class="card-btn primary"
+                    (click)="abrirModalEmail(empresa)"
+                    pTooltip="Enviar email para a empresa">
+                    <i class="pi pi-envelope"></i>
+                    <span>Enviar Email</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+      
+      <!-- Empty State -->
+      @if (!loading() && empresas().length === 0) {
+        <div class="empty-state-container">
+          <div class="empty-state">
+            <i class="pi pi-building"></i>
+            <h3>Nenhuma empresa encontrada</h3>
+            <p>Não há empresas que correspondam aos filtros aplicados.</p>
+            <button class="empty-action" (click)="limparFiltros()">
+              <i class="pi pi-refresh"></i>
+              <span>Limpar Filtros</span>
+            </button>
+          </div>
+        </div>
+      }
+      
+    </main>
+
+    <!-- Modal de Email -->
+    <app-modal-solicitacao-documentos
+      [visible]="modalEmailVisivel()"
+      (visibleChange)="fecharModalEmail()"
+      (onClose)="fecharModalEmail()"
+      (onSuccess)="onEmailEnviado()">
+    </app-modal-solicitacao-documentos>
+
+    <!-- Toast para notificações -->
+    <p-toast></p-toast>
+    
+  </div>
+</app-layout>
