@@ -1,0 +1,286 @@
+/* FORÇA BRUTA TOTAL - ÚLTIMO RECURSO */
+
+/* FORÇA ABSOLUTA NOS DROPDOWNS - TODOS OS SELETORES POSSÍVEIS */
+p-dropdown,
+.p-dropdown,
+app-gestao-documentos p-dropdown,
+app-gestao-documentos .p-dropdown,
+.documents-hub p-dropdown,
+.documents-hub .p-dropdown,
+.filter-item p-dropdown,
+.filter-item .p-dropdown,
+.modern-dropdown,
+[class*="dropdown"],
+*[class*="dropdown"],
+div[class*="dropdown"],
+.p-element.p-dropdown,
+.p-component.p-dropdown {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) !important;
+  border: 3px solid #6366f1 !important;
+  border-radius: 15px !important;
+  color: #ffffff !important;
+  min-height: 50px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  font-family: 'Inter', sans-serif !important;
+  box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4) !important;
+  backdrop-filter: blur(40px) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  transition: all 0.3s ease !important;
+  min-width: 200px !important;
+}
+
+/* FORÇA LABELS DOS FILTROS */
+.filter-label,
+app-gestao-documentos .filter-label,
+.documents-hub .filter-label,
+.filter-item label,
+.filter-item .filter-label,
+label[class*="filter"],
+*[class*="filter-label"] {
+  color: #ffffff !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  font-family: 'Inter', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  text-shadow: 0 3px 10px rgba(99, 102, 241, 0.8), 0 1px 5px rgba(0, 0, 0, 0.9) !important;
+  margin-bottom: 0.75rem !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #6366f1 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* FORÇA MÁXIMA NOS TÍTULOS */
+h1,
+.main-title,
+.title,
+app-gestao-documentos h1,
+app-gestao-documentos .main-title,
+.documents-hub h1,
+.documents-hub .main-title,
+.hub-header h1,
+.hub-header .main-title,
+.header-content h1,
+.header-content .main-title,
+.title-group h1,
+.title-group .main-title {
+  font-size: 4.5rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  text-shadow: 
+    0 5px 25px rgba(99, 102, 241, 1),
+    0 3px 15px rgba(0, 0, 0, 1),
+    0 1px 5px rgba(0, 0, 0, 1) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #6366f1 50%, #ec4899 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.03em !important;
+  text-transform: uppercase !important;
+  font-family: 'Inter', sans-serif !important;
+  position: relative !important;
+  z-index: 1001 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* FORÇA SUBTÍTULOS */
+.subtitle,
+p.subtitle,
+app-gestao-documentos .subtitle,
+.documents-hub .subtitle,
+.hub-header .subtitle,
+.header-content .subtitle,
+.title-group .subtitle {
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8) !important;
+  margin: 1rem 0 0 0 !important;
+  line-height: 1.4 !important;
+  font-family: 'Inter', sans-serif !important;
+  position: relative !important;
+  z-index: 1001 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* FORÇA DROPDOWN LABELS */
+.p-dropdown .p-dropdown-label,
+p-dropdown .p-dropdown-label,
+app-gestao-documentos .p-dropdown .p-dropdown-label,
+.documents-hub .p-dropdown .p-dropdown-label {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  padding: 15px 20px !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8) !important;
+  background: transparent !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* FORÇA DROPDOWN TRIGGER */
+.p-dropdown .p-dropdown-trigger,
+p-dropdown .p-dropdown-trigger,
+app-gestao-documentos .p-dropdown .p-dropdown-trigger,
+.documents-hub .p-dropdown .p-dropdown-trigger {
+  background: rgba(99, 102, 241, 0.3) !important;
+  border-left: 2px solid #6366f1 !important;
+  color: #ffffff !important;
+  width: 50px !important;
+  border-radius: 0 12px 12px 0 !important;
+}
+
+/* FORÇA DROPDOWN PANEL */
+.p-dropdown-panel,
+app-gestao-documentos .p-dropdown-panel,
+.documents-hub .p-dropdown-panel {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) !important;
+  border: 3px solid #6366f1 !important;
+  border-radius: 15px !important;
+  backdrop-filter: blur(50px) !important;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(99, 102, 241, 0.5) !important;
+  margin-top: 5px !important;
+  z-index: 10000 !important;
+}
+
+/* FORÇA DROPDOWN ITEMS */
+.p-dropdown-item,
+.p-dropdown-items .p-dropdown-item,
+app-gestao-documentos .p-dropdown-item,
+.documents-hub .p-dropdown-item {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 15px 20px !important;
+  margin: 3px 0 !important;
+  transition: all 0.2s ease !important;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.p-dropdown-item:hover,
+app-gestao-documentos .p-dropdown-item:hover,
+.documents-hub .p-dropdown-item:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4) 0%, rgba(139, 92, 246, 0.3) 100%) !important;
+  color: #ffffff !important;
+  transform: translateX(8px) !important;
+  box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* FORÇA SEÇÕES DE CONTROLE */
+.control-panel,
+app-gestao-documentos .control-panel,
+.documents-hub .control-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+  border: 2px solid rgba(99, 102, 241, 0.4) !important;
+  border-radius: 25px !important;
+  padding: 3rem !important;
+  backdrop-filter: blur(40px) !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 2.5rem !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* FORÇA BUSCA */
+.search-input-wrapper input,
+app-gestao-documentos .search-input-wrapper input,
+.documents-hub .search-input-wrapper input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 2px solid rgba(99, 102, 241, 0.4) !important;
+  border-radius: 18px !important;
+  color: #ffffff !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  padding: 1.8rem 2rem 1.8rem 5rem !important;
+  min-height: 65px !important;
+  font-family: 'Inter', sans-serif !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* FORÇA ÍCONE DE BUSCA */
+.search-icon,
+app-gestao-documentos .search-icon,
+.documents-hub .search-icon {
+  position: absolute !important;
+  left: 2rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #6366f1 !important;
+  font-size: 1.4rem !important;
+  z-index: 1001 !important;
+}
+
+/* FORÇA MÁXIMA - RESET TOTAL DE ESTILOS CONFLITANTES */
+* {
+  box-sizing: border-box !important;
+}
+
+/* FORÇA ABAS */
+.p-tabview-nav,
+app-gestao-documentos .p-tabview-nav,
+.documents-hub .p-tabview-nav {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+  border: 2px solid rgba(99, 102, 241, 0.4) !important;
+  border-bottom: none !important;
+  border-radius: 25px 25px 0 0 !important;
+  backdrop-filter: blur(40px) !important;
+  padding: 1.5rem 2.5rem 0 !important;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.2) !important;
+  position: relative !important;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: end !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+}
+
+.p-tabview-nav li .p-tabview-nav-link,
+app-gestao-documentos .p-tabview-nav li .p-tabview-nav-link,
+.documents-hub .p-tabview-nav li .p-tabview-nav-link {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) !important;
+  border: 3px solid rgba(99, 102, 241, 0.6) !important;
+  border-bottom: 4px solid #6366f1 !important;
+  border-radius: 18px 18px 0 0 !important;
+  color: #ffffff !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1.4rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  padding: 2rem 3.5rem 1.8rem !important;
+  margin: 0 1rem !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.8) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  position: relative !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(40px) !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  min-height: 85px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  z-index: 100 !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 35px rgba(99, 102, 241, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.15) !important;
+}
