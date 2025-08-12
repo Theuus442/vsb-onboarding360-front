@@ -1,0 +1,267 @@
+<app-layout>
+  <div class="users-management-page">
+    <!-- Enhanced Background with Particles -->
+    <div class="page-background">
+      <div class="animated-particles">
+        @for (particle of particles; track $index) {
+          <div class="particle" 
+               [style.animation-delay]="$index * 0.3 + 's'"
+               [style.animation-duration]="(4 + $index % 3) + 's'"></div>
+        }
+      </div>
+      
+      <!-- Gradient Orbs -->
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Loading State -->
+    @if (carregando()) {
+      <div class="loading-container">
+        <div class="loading-card">
+          <div class="loading-spinner">
+            <i class="pi pi-spinner pi-spin"></i>
+          </div>
+          <h3>Carregando usuários...</h3>
+          <p>Aguarde enquanto carregamos os dados do parceiro</p>
+        </div>
+      </div>
+    } @else {
+      <!-- Breadcrumb Navigation -->
+      <div class="breadcrumb-section">
+        <div class="breadcrumb-container">
+          <nav class="breadcrumb-nav">
+            <button class="breadcrumb-button" (click)="voltarParaParceiros()" aria-label="Voltar">
+              <i class="pi pi-chevron-left"></i>
+            </button>
+            <div class="breadcrumb-path">
+              <span class="breadcrumb-item">Parceiros</span>
+              <i class="pi pi-angle-right"></i>
+              <span class="breadcrumb-item">{{ parceiro()?.nome_fantasia || parceiro()?.nome }}</span>
+              <i class="pi pi-angle-right"></i>
+              <span class="breadcrumb-item current">Usuários</span>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-container">
+          <div class="hero-content">
+            <div class="hero-text">
+              <h1 class="hero-title">Usuários do Parceiro</h1>
+              <p class="hero-subtitle">Gerencie usuários e permissões</p>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card primary">
+                <div class="stat-value">{{ stats().total }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat-card success">
+                <div class="stat-value">{{ stats().responsaveis_principais }}</div>
+                <div class="stat-label">Responsáveis Principais</div>
+              </div>
+              <div class="stat-card warning">
+                <div class="stat-value">{{ stats().com_departamento }}</div>
+                <div class="stat-label">Com Departamento</div>
+              </div>
+              <div class="stat-card info">
+                <div class="stat-value">{{ stats().sem_departamento }}</div>
+                <div class="stat-label">Sem Departamento</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Section -->
+      <div class="control-section">
+        <div class="control-container">
+          <div class="search-controls">
+            <div class="search-box">
+              <app-input-busca
+                placeholder="Pesquisar por nome, email ou departamento..."
+                [valor]="searchTerm()"
+                (buscarChange)="onSearch($event)">
+              </app-input-busca>
+            </div>
+          </div>
+
+          <div class="view-controls">
+            <button
+              class="view-toggle-btn"
+              [class.active]="viewMode() === 'grid'"
+              (click)="toggleViewMode()"
+              pTooltip="Visualização em Grade"
+              tooltipPosition="top">
+              <i class="pi pi-th-large"></i>
+            </button>
+            <button
+              class="view-toggle-btn"
+              [class.active]="viewMode() === 'table'"
+              (click)="toggleViewMode()"
+              pTooltip="Visualização em Tabela"
+              tooltipPosition="top">
+              <i class="pi pi-list"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Content -->
+      <div class="data-section">
+        <div class="data-container">
+          @if (erro()) {
+            <div class="error-container">
+              <p-message severity="error" [text]="erro()!"></p-message>
+              <button p-button (click)="recarregar()" icon="pi pi-refresh" label="Tentar Novamente"></button>
+            </div>
+          } @else if (!hasData()) {
+            <div class="empty-state">
+              <div class="empty-content">
+                <i class="pi pi-users empty-icon"></i>
+                <h3>Nenhum usuário encontrado</h3>
+                <p>Este parceiro ainda não possui usuários cadastrados.</p>
+              </div>
+            </div>
+          } @else {
+            <!-- Grid View -->
+            @if (viewMode() === 'grid') {
+              <div class="users-grid">
+                <div class="grid-container">
+                  @for (usuario of filteredUsuarios(); track usuario.id) {
+                    <div class="user-card">
+                      <div class="card-header">
+                        <div class="user-avatar">
+                          {{ usuario.nome.charAt(0).toUpperCase() }}
+                        </div>
+                        <div class="user-info">
+                          <h4 class="user-name">{{ usuario.nome }}</h4>
+                          <p class="user-email">{{ usuario.email }}</p>
+                        </div>
+                      </div>
+
+                      <div class="card-body">
+                        <div class="info-grid">
+                          <div class="info-item">
+                            <span class="info-label">Responsável Principal</span>
+                            <p-tag 
+                              [value]="usuario.responsavel_principal ? 'Sim' : 'Não'" 
+                              [severity]="usuario.responsavel_principal ? 'success' : 'info'"
+                              styleClass="status-tag">
+                            </p-tag>
+                          </div>
+
+                          @if (usuario.departamento) {
+                            <div class="info-item">
+                              <span class="info-label">Departamento</span>
+                              <span class="info-value">{{ usuario.departamento }}</span>
+                            </div>
+                          }
+
+                          <div class="info-item">
+                            <span class="info-label">Data de Criação</span>
+                            <span class="info-value">{{ formatarData(usuario.created_at) }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="card-actions">
+                        <button 
+                          class="action-icon-btn info" 
+                          (click)="definirResponsavel(usuario)"
+                          [pTooltip]="'Definir como responsável principal'"
+                          [attr.aria-label]="'Definir ' + usuario.nome + ' como responsável principal'">
+                          <i class="pi pi-star"></i>
+                        </button>
+                        <button 
+                          class="action-icon-btn success" 
+                          (click)="enviarEmail(usuario)"
+                          pTooltip="Enviar email"
+                          [attr.aria-label]="'Enviar email para ' + usuario.nome">
+                          <i class="pi pi-envelope"></i>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            } @else {
+              <!-- Table View -->
+              <div class="table-container">
+                <p-table 
+                  [value]="filteredUsuarios()" 
+                  [rows]="10" 
+                  [paginator]="true"
+                  [responsive]="true"
+                  styleClass="modern-table">
+                  
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Responsável Principal</th>
+                      <th scope="col">Departamento</th>
+                      <th scope="col">Criado em</th>
+                      <th scope="col">Ações</th>
+                    </tr>
+                  </ng-template>
+                  
+                  <ng-template pTemplate="body" let-usuario>
+                    <tr>
+                      <td>
+                        <div class="table-user-info">
+                          <div class="table-user-avatar">
+                            {{ usuario.nome.charAt(0).toUpperCase() }}
+                          </div>
+                          <span class="table-user-name">{{ usuario.nome }}</span>
+                        </div>
+                      </td>
+                      <td>{{ usuario.email }}</td>
+                      <td>
+                        <p-tag 
+                          [value]="usuario.responsavel_principal ? 'Sim' : 'Não'" 
+                          [severity]="usuario.responsavel_principal ? 'success' : 'info'"
+                          styleClass="status-tag">
+                        </p-tag>
+                      </td>
+                      <td>{{ usuario.departamento || '-' }}</td>
+                      <td>{{ formatarData(usuario.created_at) }}</td>
+                      <td>
+                        <div class="table-actions">
+                          <button 
+                            class="table-action-btn info" 
+                            (click)="definirResponsavel(usuario)"
+                            [pTooltip]="'Definir como responsável principal'"
+                            [attr.aria-label]="'Definir ' + usuario.nome + ' como responsável principal'">
+                            <i class="pi pi-star"></i>
+                          </button>
+                          <button 
+                            class="table-action-btn" 
+                            (click)="enviarEmail(usuario)"
+                            pTooltip="Email"
+                            [attr.aria-label]="'Enviar email para ' + usuario.nome">
+                            <i class="pi pi-envelope"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
+</app-layout>
+
+<!-- Toast Messages -->
+<p-toast></p-toast>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog></p-confirmDialog>
