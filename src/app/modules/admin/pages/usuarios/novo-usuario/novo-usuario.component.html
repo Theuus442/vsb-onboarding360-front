@@ -1,0 +1,472 @@
+<app-layout>
+  <div class="user-creation-page">
+    <!-- Enhanced Background with Particles -->
+    <div class="page-background">
+      <div class="animated-particles">
+        @for (particle of particles; track $index) {
+          <div class="particle" 
+               [style.animation-delay]="$index * 0.3 + 's'"
+               [style.animation-duration]="(4 + $index % 3) + 's'"></div>
+        }
+      </div>
+      
+      <!-- Gradient Orbs -->
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-section">
+      <div class="breadcrumb-container">
+        <nav class="breadcrumb-nav">
+          <button class="breadcrumb-button" (click)="voltarParaLista()" aria-label="Voltar">
+            <i class="pi pi-chevron-left"></i>
+          </button>
+          <div class="breadcrumb-path">
+            <span class="breadcrumb-item">Usuários</span>
+            <i class="pi pi-angle-right"></i>
+            <span class="breadcrumb-item current">Novo</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <i class="pi pi-user-plus"></i>
+            <span>Novo Usuário</span>
+          </div>
+          
+          <h1 class="hero-title">
+            <span class="title-gradient">Adicionar Membro</span>
+          </h1>
+          
+          <p class="hero-description">
+            Complete as informações abaixo para adicionar um novo membro à equipe
+          </p>
+          
+          <!-- Progress Steps -->
+          <div class="progress-steps">
+            <div class="step active">
+              <div class="step-circle">
+                <i class="pi pi-user"></i>
+              </div>
+              <span class="step-label">Dados Pessoais</span>
+            </div>
+            <div class="step-line active"></div>
+            <div class="step" [class.active]="isPersonalDataValid()">
+              <div class="step-circle">
+                <i class="pi pi-briefcase"></i>
+              </div>
+              <span class="step-label">Dados Profissionais</span>
+            </div>
+            <div class="step-line" [class.active]="formUsuario.valid"></div>
+            <div class="step" [class.active]="formUsuario.valid">
+              <div class="step-circle">
+                <i class="pi pi-check" *ngIf="formUsuario.valid; else stepIcon"></i>
+                <ng-template #stepIcon>
+                  <i class="pi pi-save"></i>
+                </ng-template>
+              </div>
+              <span class="step-label">Finalizar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Form Section -->
+    <div class="form-section">
+      <div class="form-container">
+        <form [formGroup]="formUsuario" (ngSubmit)="onSubmit()" class="enhanced-form">
+          
+          <!-- Form Header -->
+          <div class="form-header">
+            <div class="form-status">
+              <div class="status-indicator" [class.complete]="formUsuario.valid">
+                <div class="status-dot"></div>
+                <span class="status-text">
+                  {{ formUsuario.valid ? 'Formulário Completo' : 'Preencha os campos' }}
+                </span>
+              </div>
+              
+              <div class="form-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="getFormProgress()"></div>
+                </div>
+                <span class="progress-text">{{ getFormProgress() }}% completo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Form Content -->
+          <div class="form-body">
+            
+            <!-- Personal Information Card -->
+            <div class="info-card personal-info">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="pi pi-user"></i>
+                </div>
+                <div class="card-title">
+                  <h3>Informações Pessoais</h3>
+                  <p>Dados básicos de identificação</p>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="fields-grid">
+                  
+                  <!-- Nome Completo -->
+                  <div class="field-container full-width">
+                    <div class="field-wrapper" [class.filled]="formUsuario.get('nome')?.value">
+                      <label for="nome" class="floating-label">
+                        <i class="pi pi-user"></i>
+                        Nome Completo
+                      </label>
+                      <input
+                        id="nome"
+                        type="text"
+                        pInputText
+                        formControlName="nome"
+                        placeholder=" "
+                        [class.error]="isCampoInvalido('nome')"
+                        [class.success]="isCampoValido('nome')"
+                        class="enhanced-input" />
+                      
+                      <div class="field-icons">
+                        @if (isCampoValido('nome')) {
+                          <i class="pi pi-check success-icon"></i>
+                        } @else if (isCampoInvalido('nome')) {
+                          <i class="pi pi-times error-icon"></i>
+                        }
+                      </div>
+                      
+                      <div class="input-border"></div>
+                    </div>
+                    
+                    @if (isCampoInvalido('nome')) {
+                      <div class="field-error">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        {{ getMensagemErro('nome') }}
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Email -->
+                  <div class="field-container">
+                    <div class="field-wrapper" [class.filled]="formUsuario.get('email')?.value">
+                      <label for="email" class="floating-label">
+                        <i class="pi pi-envelope"></i>
+                        E-mail Profissional
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        pInputText
+                        formControlName="email"
+                        placeholder=" "
+                        (blur)="validateEmail()"
+                        [class.error]="isCampoInvalido('email')"
+                        [class.success]="isCampoValido('email')"
+                        class="enhanced-input" />
+                      
+                      <div class="field-icons">
+                        @if (isCampoValido('email')) {
+                          <i class="pi pi-check success-icon"></i>
+                        } @else if (isCampoInvalido('email')) {
+                          <i class="pi pi-times error-icon"></i>
+                        }
+                      </div>
+                      
+                      <div class="input-border"></div>
+                    </div>
+                    
+                    @if (isCampoInvalido('email')) {
+                      <div class="field-error">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        {{ getMensagemErro('email') }}
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Senha -->
+                  <div class="field-container">
+                    <div class="field-wrapper" [class.filled]="formUsuario.get('senha')?.value">
+                      <label for="senha" class="floating-label">
+                        <i class="pi pi-lock"></i>
+                        Senha de Acesso
+                      </label>
+                      <input
+                        id="senha"
+                        [type]="showPassword() ? 'text' : 'password'"
+                        pInputText
+                        formControlName="senha"
+                        placeholder=" "
+                        [class.error]="isCampoInvalido('senha')"
+                        [class.success]="isCampoValido('senha')"
+                        class="enhanced-input" />
+                      
+                      <div class="field-icons">
+                        <button 
+                          type="button" 
+                          class="password-toggle"
+                          (click)="togglePasswordVisibility()"
+                          [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+                          <i class="pi" [ngClass]="showPassword() ? 'pi-eye-slash' : 'pi-eye'"></i>
+                        </button>
+                        @if (isCampoValido('senha')) {
+                          <i class="pi pi-check success-icon"></i>
+                        } @else if (isCampoInvalido('senha')) {
+                          <i class="pi pi-times error-icon"></i>
+                        }
+                      </div>
+                      
+                      <div class="input-border"></div>
+                      <div class="password-strength">
+                        <div class="strength-bar">
+                          <div class="strength-fill" 
+                               [style.width.%]="getPasswordStrength()" 
+                               [attr.data-strength]="getPasswordStrengthLevel()"></div>
+                        </div>
+                        <span class="strength-text">{{ getPasswordStrengthText() }}</span>
+                      </div>
+                    </div>
+                    
+                    @if (isCampoInvalido('senha')) {
+                      <div class="field-error">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        {{ getMensagemErro('senha') }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Professional Information Card -->
+            <div class="info-card professional-info">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="pi pi-briefcase"></i>
+                </div>
+                <div class="card-title">
+                  <h3>Informações Profissionais</h3>
+                  <p>Configurações de cargo e acesso</p>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="fields-grid">
+                  
+                  <!-- Papel -->
+                  <div class="field-container">
+                    <div class="field-wrapper dropdown-wrapper" [class.filled]="formUsuario.get('papel')?.value">
+                      <label for="papel" class="floating-label">
+                        <i class="pi pi-shield"></i>
+                        Papel no Sistema
+                      </label>
+                      
+                      <p-dropdown
+                        id="papel"
+                        formControlName="papel"
+                        [options]="opcoesPapel"
+                        placeholder=" "
+                        optionLabel="label"
+                        optionValue="value"
+                        [class.error]="isCampoInvalido('papel')"
+                        [class.success]="isCampoValido('papel')"
+                        class="enhanced-dropdown"
+                        appendTo="body">
+                        
+                        <ng-template pTemplate="selectedItem">
+                          <div class="selected-option" *ngIf="formUsuario.get('papel')?.value">
+                            <div class="role-badge" [attr.data-role]="formUsuario.get('papel')?.value">
+                              <i class="pi" [ngClass]="{
+                                'pi-crown': formUsuario.get('papel')?.value === 'admin',
+                                'pi-users': formUsuario.get('papel')?.value === 'parceiro',
+                                'pi-user-edit': formUsuario.get('papel')?.value === 'admin_parceiro',
+                                'pi-user': formUsuario.get('papel')?.value === 'interno'
+                              }"></i>
+                              {{ getRoleLabel(formUsuario.get('papel')?.value) }}
+                            </div>
+                          </div>
+                        </ng-template>
+                        
+                        <ng-template let-option pTemplate="item">
+                          <div class="dropdown-option">
+                            <div class="role-badge" [attr.data-role]="option.value">
+                              <i class="pi" [ngClass]="{
+                                'pi-crown': option.value === 'admin',
+                                'pi-users': option.value === 'parceiro',
+                                'pi-user-edit': option.value === 'admin_parceiro',
+                                'pi-user': option.value === 'interno'
+                              }"></i>
+                              {{ option.label }}
+                            </div>
+                            <span class="role-description">{{ getRoleDescription(option.value) }}</span>
+                          </div>
+                        </ng-template>
+                      </p-dropdown>
+                      
+                      <div class="field-icons">
+                        @if (isCampoValido('papel')) {
+                          <i class="pi pi-check success-icon"></i>
+                        } @else if (isCampoInvalido('papel')) {
+                          <i class="pi pi-times error-icon"></i>
+                        }
+                      </div>
+                      
+                      <div class="input-border"></div>
+                    </div>
+                    
+                    @if (isCampoInvalido('papel')) {
+                      <div class="field-error">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        {{ getMensagemErro('papel') }}
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Departamento -->
+                  <div class="field-container">
+                    <div class="field-wrapper dropdown-wrapper" [class.filled]="formUsuario.get('departamento')?.value">
+                      <label for="departamento" class="floating-label">
+                        <i class="pi pi-building"></i>
+                        Departamento
+                      </label>
+                      
+                      <p-dropdown
+                        id="departamento"
+                        formControlName="departamento"
+                        [options]="departamentos()"
+                        placeholder=" "
+                        optionLabel="label"
+                        optionValue="value"
+                        [showClear]="true"
+                        [class.error]="isCampoInvalido('departamento')"
+                        [class.success]="isCampoValido('departamento')"
+                        class="enhanced-dropdown"
+                        appendTo="body">
+                        
+                        <ng-template let-option pTemplate="item">
+                          <div class="dropdown-option">
+                            <div class="department-option">
+                              <div class="department-icon">
+                                <i class="pi pi-building"></i>
+                              </div>
+                              <span class="department-name">{{ option.label }}</span>
+                            </div>
+                          </div>
+                        </ng-template>
+                        
+                        <ng-template pTemplate="selectedItem">
+                          <div class="selected-option" *ngIf="getSelectedDepartamento()">
+                            <div class="department-option">
+                              <div class="department-icon">
+                                <i class="pi pi-building"></i>
+                              </div>
+                              <span class="department-name">{{ getSelectedDepartamento()!.label }}</span>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </p-dropdown>
+                      
+                      <div class="field-icons">
+                        @if (isCampoValido('departamento')) {
+                          <i class="pi pi-check success-icon"></i>
+                        } @else if (isCampoInvalido('departamento')) {
+                          <i class="pi pi-times error-icon"></i>
+                        }
+                      </div>
+                      
+                      <div class="input-border"></div>
+                    </div>
+                    
+                    @if (isCampoInvalido('departamento')) {
+                      <div class="field-error">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        {{ getMensagemErro('departamento') }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Form Actions -->
+          <div class="form-actions">
+            <div class="actions-container">
+              
+              <!-- Save Draft Button -->
+              <button
+                type="button"
+                class="action-btn draft-btn"
+                (click)="salvarRascunho()"
+                [disabled]="salvando() || !hasFormData()"
+                *ngIf="!formUsuario.pristine">
+                <i class="pi pi-file"></i>
+                <span>Salvar Rascunho</span>
+              </button>
+              
+              <!-- Cancel Button -->
+              <button
+                type="button"
+                class="action-btn cancel-btn"
+                (click)="voltarParaLista()"
+                [disabled]="salvando()">
+                <i class="pi pi-times"></i>
+                <span>Cancelar</span>
+              </button>
+              
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                class="action-btn submit-btn"
+                [disabled]="!podeSalvar()"
+                [class.loading]="salvando()">
+                
+                <div class="btn-content">
+                  @if (salvando()) {
+                    <div class="loading-spinner">
+                      <i class="pi pi-spinner pi-spin"></i>
+                    </div>
+                    <span>Criando Usuário...</span>
+                  } @else {
+                    <i class="pi pi-user-plus"></i>
+                    <span>Criar Usuário</span>
+                  }
+                </div>
+                
+                <div class="btn-ripple"></div>
+              </button>
+            </div>
+            
+            <!-- Form Summary -->
+            <div class="form-summary" *ngIf="formUsuario.dirty">
+              <div class="summary-item">
+                <span class="summary-label">Campos preenchidos:</span>
+                <span class="summary-value">{{ getFilledFieldsCount() }}/{{ getTotalFieldsCount() }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Status:</span>
+                <span class="summary-value" [class.success]="formUsuario.valid" [class.error]="!formUsuario.valid">
+                  {{ formUsuario.valid ? 'Pronto para salvar' : 'Há campos inválidos' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Toast -->
+  <p-toast position="top-right" [style]="{marginTop: '80px'}"></p-toast>
+</app-layout>
