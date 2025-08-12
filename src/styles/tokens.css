@@ -1,0 +1,42 @@
+:root {
+    /* Cores principais */
+    --primary: #A52831;
+    --primary-hover: #8B1E26;
+    /* Cores de texto */
+    --text: #242524;
+    --text-muted: #8C8D8B;
+    /* Cores de fundo */
+    --bg: #FFFFFF;
+    --bg-muted: #FAFAFB;
+    /* Bordas */
+    --border: #EBEBEA;
+    /* Estados */
+    --success: #22C55E;
+    --warning: #F97316;
+    --error: #EF4444;
+    --info: #3B82F6;
+    /* Sombras */
+    --shadow: 0 0 2px rgba(23, 26, 31, 0.12), 0 0 1px rgba(23, 26, 31, 0.07);
+    --shadow-hover: 0 4px 12px rgba(23, 26, 31, 0.15);
+    /* Bordas arredondadas */
+    --radius: 12px;
+    --radius-sm: 6px;
+    /* Tipografia */
+    --font: Inter, -apple-system, sans-serif;
+    --font-display: Archivo, -apple-system, sans-serif;
+    /* Espaçamentos */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 40px;
+    --spacing-3xl: 64px;
+    /* Alturas comuns */
+    --input-height: 39px;
+    --button-height: 40px;
+    --header-height: 56px;
+    /* Larguras comuns */
+    --container-max-width: 1200px;
+    --form-width: 270px;
+}

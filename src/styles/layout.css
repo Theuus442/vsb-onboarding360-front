@@ -1,0 +1,139 @@
+.base-layout {
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: var(--font);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+/* Header */
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+    padding: 0 var(--spacing-3xl);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.logo-text {
+    font: 500 18px var(--font);
+    margin: 0;
+}
+
+
+/* Navigation */
+
+.navigation-menu {
+    display: flex;
+    gap: var(--spacing-xl);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-item {
+    font: 500 14px var(--font);
+    text-decoration: none;
+    color: var(--text);
+    padding: var(--spacing-sm) 0;
+    transition: color 0.2s;
+    position: relative;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--primary);
+}
+
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 1px;
+}
+
+
+/* Header Actions */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-shrink: 0;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    font-size: 16px;
+}
+
+.action-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
+}
+
+
+/* Main Content */
+
+.main-content {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    width: 100%;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.page-title {
+    font: 700 30px/1.2 var(--font-display);
+    margin: 0;
+}
