@@ -1,0 +1,162 @@
+<app-layout>
+  <div class="partners-management-container">
+    <!-- Hero Header -->
+    <div class="hero-header">
+      <div class="hero-content">
+        <div class="hero-title-section">
+          <div class="hero-icon">
+            <i class="pi pi-building"></i>
+          </div>
+          <div class="hero-text">
+            <h1 class="hero-title">Gerenciamento de Parceiros</h1>
+            <p class="hero-subtitle">Gerencie todos os parceiros do sistema</p>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="action-button secondary" (click)="novoUsuario()">
+            <i class="pi pi-user-plus"></i>
+            <span>Adicionar Usuário</span>
+          </button>
+          <button class="action-button primary" (click)="novoParceiro()">
+            <i class="pi pi-plus"></i>
+            <span>Novo Parceiro</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon"></i>
+          <app-search-input
+            placeholder="Pesquisar parceiros por nome, email ou CNPJ"
+            [value]="pesquisaParceiros()"
+            (search)="onSearch($event)">
+          </app-search-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-container">
+        <app-loading
+          message="Carregando parceiros..."
+          size="40px">
+        </app-loading>
+      </div>
+    }
+
+    <!-- Partners Grid -->
+    @if (!loading()) {
+      <div class="partners-grid">
+        @if (parceiros().length > 0) {
+          @for (parceiro of parceiros(); track parceiro.id; let i = $index) {
+            <div class="partner-card" [style.animation-delay]="(i * 100) + 'ms'">
+              <div class="partner-card-header">
+                <div class="partner-avatar">
+                  <i class="pi pi-building"></i>
+                </div>
+                <div class="partner-info">
+                  <h3 class="partner-name">{{ parceiro.nome }}</h3>
+                  <p class="partner-cnpj">{{ parceiro.cnpj }}</p>
+                </div>
+                <div class="partner-actions">
+                  <button class="card-action-btn"
+                          (click)="acaoParceiro(parceiro, 'editar')"
+                          title="Editar parceiro">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button class="card-action-btn"
+                          (click)="acaoParceiro(parceiro, 'usuarios')"
+                          title="Gerenciar usuários">
+                    <i class="pi pi-users"></i>
+                  </button>
+                  <button class="card-action-btn more"
+                          (click)="toggleMenu($event, parceiro)"
+                          title="Mais opções">
+                    <i class="pi pi-ellipsis-v"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="partner-card-body">
+                <div class="partner-detail">
+                  <span class="detail-label">Status</span>
+                  <app-status-tag [status]="parceiro.status" type="parceiro"></app-status-tag>
+                </div>
+
+                @if (parceiro.email) {
+                  <div class="partner-detail">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value">{{ parceiro.email }}</span>
+                  </div>
+                }
+
+                @if (parceiro.telefone) {
+                  <div class="partner-detail">
+                    <span class="detail-label">Telefone</span>
+                    <span class="detail-value">{{ parceiro.telefone }}</span>
+                  </div>
+                }
+
+                @if (parceiro.total_usuarios) {
+                  <div class="partner-detail">
+                    <span class="detail-label">Usuários</span>
+                    <span class="detail-value users-count">
+                      <i class="pi pi-users"></i>
+                      {{ parceiro.total_usuarios }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <div class="empty-state-content">
+              <div class="empty-icon">
+                <i class="pi pi-building"></i>
+              </div>
+              <h3 class="empty-title">Nenhum parceiro encontrado</h3>
+              @if (pesquisaParceiros()) {
+                <p class="empty-description">
+                  Não encontramos parceiros com o termo "{{ pesquisaParceiros() }}"
+                </p>
+                <button class="empty-action-btn" (click)="pesquisaParceiros.set(''); loadParceiros()">
+                  <i class="pi pi-times"></i>
+                  Limpar busca
+                </button>
+              } @else {
+                <p class="empty-description">
+                  Comece adicionando o primeiro parceiro ao sistema
+                </p>
+                <button class="empty-action-btn primary" (click)="novoParceiro()">
+                  <i class="pi pi-plus"></i>
+                  Adicionar primeiro parceiro
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Pagination -->
+    @if (!loading() && totalItems() > 0) {
+      <div class="pagination-container">
+        <app-pagination
+          [currentPage]="paginaAtual()"
+          [itemsPerPage]="itensPorPagina()"
+          [totalItems]="totalItems()"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    }
+  </div>
+
+  <p-menu #menu [model]="[]" [popup]="true"></p-menu>
+  <p-toast></p-toast>
+</app-layout>
