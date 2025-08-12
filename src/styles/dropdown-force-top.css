@@ -1,0 +1,109 @@
+/* ========================================================================
+   FORÇA DROPDOWN NO TOPO - SOLUÇÃO DEFINITIVA
+   ======================================================================== */
+
+/* Força todos os dropdowns para o topo da hierarquia visual */
+app-dropdown-moderno,
+app-dropdown-simples,
+.dropdown-container,
+.modern-dropdown {
+  isolation: isolate !important;
+}
+
+/* Quando aberto, força máximo z-index */
+app-dropdown-moderno.open,
+app-dropdown-simples.open,
+.dropdown-container.open,
+.modern-dropdown.open,
+app-dropdown-moderno:has(.dropdown-panel),
+app-dropdown-simples:has(.dropdown-panel),
+.dropdown-container:has(.dropdown-panel),
+.modern-dropdown:has(.dropdown-panel) {
+  z-index: 2147483647 !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+/* Panel com posicionamento forçado */
+app-dropdown-moderno .dropdown-panel,
+app-dropdown-simples .dropdown-panel,
+.dropdown-container .dropdown-panel,
+.modern-dropdown .dropdown-panel {
+  position: absolute !important;
+  z-index: 2147483647 !important;
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
+/* Garante que o container do dropdown sempre tenha stacking context próprio */
+.field-wrapper:has(app-dropdown-moderno),
+.field-wrapper:has(app-dropdown-simples),
+.dropdown-wrapper:has(app-dropdown-moderno),
+.dropdown-wrapper:has(app-dropdown-simples),
+.form-group:has(app-dropdown-moderno),
+.form-group:has(app-dropdown-simples) {
+  z-index: 2147483647 !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+/* Força stacking context em containers pai */
+.field-container:has(app-dropdown-moderno),
+.field-container:has(app-dropdown-simples) {
+  z-index: 2147483647 !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+/* CSS para forçar o dropdown acima de overlays e modais */
+app-dropdown-moderno .dropdown-panel,
+app-dropdown-simples .dropdown-panel {
+  position: absolute !important;
+  z-index: 2147483647 !important;
+  transform: translateZ(999px) !important;
+  backface-visibility: hidden !important;
+  perspective: 1000px !important;
+}
+
+/* Garante que elementos de fundo não interfiram */
+.page-background,
+.animated-particles,
+.gradient-orb,
+.particle {
+  z-index: -1 !important;
+  position: fixed !important;
+}
+
+/* Força dropdown acima de qualquer overlay do PrimeNG */
+.p-component-overlay,
+.p-dialog-mask,
+.p-sidebar-mask,
+.p-tooltip {
+  z-index: 2147483646 !important;
+}
+
+/* Força dropdown acima de qualquer backdrop */
+.backdrop,
+.modal-backdrop,
+.overlay,
+.p-overlay {
+  z-index: 2147483645 !important;
+}
+
+/* Solução para casos extremos - cria novo stacking context */
+app-dropdown-moderno[open],
+app-dropdown-simples[open] {
+  position: relative !important;
+  z-index: 2147483647 !important;
+  transform: translateZ(0) !important;
+}
+
+/* Força visual priority */
+app-dropdown-moderno .dropdown-panel,
+app-dropdown-simples .dropdown-panel {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  display: block !important;
+}

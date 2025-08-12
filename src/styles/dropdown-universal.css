@@ -1,0 +1,306 @@
+/* ========================================================================
+   DROPDOWN UNIVERSAL STYLES - DEFINITIVE SOLUTION
+   ======================================================================== */
+
+/* Reset para todos os dropdowns */
+app-dropdown-moderno,
+app-dropdown-simples,
+.dropdown-container,
+.modern-dropdown {
+  position: relative !important;
+  width: 100% !important;
+  display: block !important;
+  font-family: inherit !important;
+}
+
+/* Container quando aberto */
+app-dropdown-moderno.open,
+app-dropdown-simples.open,
+.dropdown-container.open,
+.modern-dropdown.open {
+  z-index: 2147483647 !important;
+  position: relative !important;
+}
+
+/* Trigger padrão para todos os dropdowns */
+app-dropdown-moderno .dropdown-trigger,
+app-dropdown-simples .dropdown-trigger,
+.dropdown-container .dropdown-trigger,
+.modern-dropdown .dropdown-trigger {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 12px 16px !important;
+  background: rgba(17, 24, 39, 0.95) !important;
+  border: 1px solid rgba(75, 85, 99, 0.6) !important;
+  border-radius: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+}
+
+/* Hover states */
+app-dropdown-moderno .dropdown-trigger:hover,
+app-dropdown-simples .dropdown-trigger:hover,
+.dropdown-container .dropdown-trigger:hover,
+.modern-dropdown .dropdown-trigger:hover {
+  border-color: rgba(99, 102, 241, 0.6) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Open states */
+app-dropdown-moderno .dropdown-trigger.open,
+app-dropdown-simples .dropdown-trigger.open,
+.dropdown-container .dropdown-trigger.open,
+.modern-dropdown .dropdown-trigger.open {
+  border-color: rgba(99, 102, 241, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Panel universal */
+app-dropdown-moderno .dropdown-panel,
+app-dropdown-simples .dropdown-panel,
+.dropdown-container .dropdown-panel,
+.modern-dropdown .dropdown-panel {
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin-top: 4px !important;
+  background: rgba(17, 24, 39, 0.98) !important;
+  border: 1px solid rgba(75, 85, 99, 0.4) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  z-index: 2147483647 !important;
+  backdrop-filter: blur(10px) !important;
+  overflow: hidden !important;
+}
+
+/* Content styles */
+app-dropdown-moderno .dropdown-content,
+app-dropdown-simples .dropdown-content,
+.dropdown-container .dropdown-content,
+.modern-dropdown .dropdown-content {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+/* Selected text */
+app-dropdown-moderno .selected-text,
+app-dropdown-simples .selected-text,
+.dropdown-container .selected-text,
+.modern-dropdown .selected-text {
+  color: rgba(255, 255, 255, 1) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+}
+
+/* Placeholder */
+app-dropdown-moderno .placeholder,
+app-dropdown-simples .placeholder,
+.dropdown-container .placeholder,
+.modern-dropdown .placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 0.95rem !important;
+}
+
+/* Actions */
+app-dropdown-moderno .dropdown-actions,
+app-dropdown-simples .dropdown-actions,
+.dropdown-container .dropdown-actions,
+.modern-dropdown .dropdown-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-left: 8px !important;
+}
+
+/* Arrow icon */
+app-dropdown-moderno .arrow,
+app-dropdown-moderno .arrow-icon,
+app-dropdown-simples .arrow,
+app-dropdown-simples .arrow-icon,
+.dropdown-container .arrow,
+.dropdown-container .arrow-icon,
+.modern-dropdown .arrow,
+.modern-dropdown .arrow-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* Rotated arrow */
+app-dropdown-moderno .arrow.rotated,
+app-dropdown-moderno .arrow-icon.rotated,
+app-dropdown-simples .arrow.rotated,
+app-dropdown-simples .arrow-icon.rotated,
+.dropdown-container .arrow.rotated,
+.dropdown-container .arrow-icon.rotated,
+.modern-dropdown .arrow.rotated,
+.modern-dropdown .arrow-icon.rotated {
+  transform: rotate(180deg) !important;
+}
+
+/* Clear button */
+app-dropdown-moderno .clear-btn,
+app-dropdown-moderno .clear-button,
+app-dropdown-simples .clear-btn,
+app-dropdown-simples .clear-button,
+.dropdown-container .clear-btn,
+.dropdown-container .clear-button,
+.modern-dropdown .clear-btn,
+.modern-dropdown .clear-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  background: none !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  cursor: pointer !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+app-dropdown-moderno .clear-btn:hover,
+app-dropdown-moderno .clear-button:hover,
+app-dropdown-simples .clear-btn:hover,
+app-dropdown-simples .clear-button:hover,
+.dropdown-container .clear-btn:hover,
+.dropdown-container .clear-button:hover,
+.modern-dropdown .clear-btn:hover,
+.modern-dropdown .clear-button:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: rgba(239, 68, 68, 1) !important;
+}
+
+/* Option items */
+app-dropdown-moderno .option-item,
+app-dropdown-simples .option-item,
+.dropdown-container .option-item,
+.modern-dropdown .option-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px 16px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+app-dropdown-moderno .option-item:hover,
+app-dropdown-moderno .option-item.highlighted,
+app-dropdown-simples .option-item:hover,
+app-dropdown-simples .option-item.highlighted,
+.dropdown-container .option-item:hover,
+.dropdown-container .option-item.highlighted,
+.modern-dropdown .option-item:hover,
+.modern-dropdown .option-item.highlighted {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: rgba(255, 255, 255, 1) !important;
+}
+
+app-dropdown-moderno .option-item.selected,
+app-dropdown-simples .option-item.selected,
+.dropdown-container .option-item.selected,
+.modern-dropdown .option-item.selected {
+  background: rgba(99, 102, 241, 0.25) !important;
+  color: rgba(255, 255, 255, 1) !important;
+}
+
+/* Disabled state */
+app-dropdown-moderno.disabled,
+app-dropdown-simples.disabled,
+.dropdown-container.disabled,
+.modern-dropdown.disabled {
+  opacity: 0.6 !important;
+  pointer-events: none !important;
+}
+
+/* Form integration */
+.form-group app-dropdown-moderno,
+.form-group app-dropdown-simples,
+.field-container app-dropdown-moderno,
+.field-container app-dropdown-simples,
+.form-field app-dropdown-moderno,
+.form-field app-dropdown-simples {
+  width: 100% !important;
+}
+
+/* Field wrapper integration */
+.field-wrapper app-dropdown-moderno .dropdown-trigger,
+.field-wrapper app-dropdown-simples .dropdown-trigger,
+.dropdown-wrapper app-dropdown-moderno .dropdown-trigger,
+.dropdown-wrapper app-dropdown-simples .dropdown-trigger {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  min-height: 60px !important;
+  padding: 1.5rem 3rem 1rem 1rem !important;
+  box-shadow: none !important;
+}
+
+.field-wrapper app-dropdown-moderno .dropdown-trigger:hover,
+.field-wrapper app-dropdown-simples .dropdown-trigger:hover,
+.dropdown-wrapper app-dropdown-moderno .dropdown-trigger:hover,
+.dropdown-wrapper app-dropdown-simples .dropdown-trigger:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.field-wrapper app-dropdown-moderno .dropdown-trigger.open,
+.field-wrapper app-dropdown-simples .dropdown-trigger.open,
+.dropdown-wrapper app-dropdown-moderno .dropdown-trigger.open,
+.dropdown-wrapper app-dropdown-simples .dropdown-trigger.open {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Actions positioning in field wrapper */
+.field-wrapper app-dropdown-moderno .dropdown-actions,
+.field-wrapper app-dropdown-simples .dropdown-actions,
+.dropdown-wrapper app-dropdown-moderno .dropdown-actions,
+.dropdown-wrapper app-dropdown-simples .dropdown-actions {
+  position: absolute !important;
+  right: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: 0 !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  app-dropdown-moderno .dropdown-trigger,
+  app-dropdown-simples .dropdown-trigger,
+  .dropdown-container .dropdown-trigger,
+  .modern-dropdown .dropdown-trigger {
+    min-height: 48px !important;
+    padding: 14px 16px !important;
+  }
+  
+  .field-wrapper app-dropdown-moderno .dropdown-trigger,
+  .field-wrapper app-dropdown-simples .dropdown-trigger,
+  .dropdown-wrapper app-dropdown-moderno .dropdown-trigger,
+  .dropdown-wrapper app-dropdown-simples .dropdown-trigger {
+    min-height: 64px !important;
+    padding: 16px 3rem 16px 1rem !important;
+  }
+}
