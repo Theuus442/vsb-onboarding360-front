@@ -1,0 +1,147 @@
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="upload-dialog"
+  header="Upload de Documento PDF"
+  [style]="{width: '600px'}">
+  
+  <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" class="upload-form">
+    <!-- Nome do Documento -->
+    <div class="form-field">
+      <label for="nome" class="field-label">
+        Nome do Documento <span class="required">*</span>
+      </label>
+      <input 
+        id="nome"
+        type="text" 
+        pInputText 
+        formControlName="nome"
+        placeholder="Nome do documento"
+        class="w-full"
+        [class.ng-invalid]="isFieldInvalid('nome')" />
+      @if (isFieldInvalid('nome')) {
+        <small class="error-message">
+          Nome do documento é obrigatório
+        </small>
+      }
+    </div>
+
+    <!-- Setor de Destino -->
+    <div class="form-field">
+      <label for="setor" class="field-label">
+        Setor Responsável <span class="required">*</span>
+      </label>
+      <app-dropdown-moderno
+        [options]="opcoesSetores"
+        placeholder="Selecione o setor responsável"
+        [clearable]="true"
+        [hasError]="isFieldInvalid('setor_destino')"
+        formControlName="setor_destino">
+      </app-dropdown-moderno>
+      @if (isFieldInvalid('setor_destino')) {
+        <small class="error-message">
+          Setor responsável é obrigatório
+        </small>
+      }
+    </div>
+
+    <!-- Upload de Arquivo PDF -->
+    <div class="form-field">
+      <label class="field-label">
+        Arquivo PDF <span class="required">*</span>
+      </label>
+      
+      <div class="upload-area" 
+           [class.drag-over]="isDragOver"
+           [class.has-file]="arquivoSelecionado()"
+           [class.invalid]="isFieldInvalid('arquivo')"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onFileDropped($event)"
+           (click)="fileInput.click()">
+        
+        <input 
+          #fileInput
+          type="file" 
+          (change)="onFileSelected($event)"
+          accept=".pdf"
+          style="display: none;" />
+        
+        @if (!arquivoSelecionado()) {
+          <div class="upload-placeholder">
+            <i class="pi pi-file-pdf upload-icon"></i>
+            <h4>Clique ou arraste o arquivo PDF aqui</h4>
+            <p>Apenas arquivos PDF são aceitos</p>
+            <p>Tamanho máximo: 10MB</p>
+          </div>
+        }
+        
+        @if (arquivoSelecionado()) {
+          <div class="file-selected">
+            <div class="file-info">
+              <i class="pi pi-file-pdf file-icon"></i>
+              <div class="file-details">
+                <span class="file-name">{{ arquivo()?.name }}</span>
+                <span class="file-size">{{ formatFileSize(arquivo()?.size || 0) }}</span>
+              </div>
+            </div>
+            <button 
+              type="button" 
+              class="remove-file"
+              (click)="removerArquivo($event)"
+              pTooltip="Remover arquivo">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+      
+      @if (isFieldInvalid('arquivo')) {
+        <small class="error-message">
+          Arquivo PDF é obrigatório
+        </small>
+      }
+    </div>
+
+    <!-- Progress bar durante upload -->
+    @if (uploading()) {
+      <div class="upload-progress">
+        <p-progressBar 
+          [value]="progressoUpload()" 
+          [showValue]="true"
+          unit="%">
+        </p-progressBar>
+        <small>Enviando documento...</small>
+      </div>
+    }
+
+    <!-- Informação sobre identificação automática do parceiro -->
+    <div class="info-parceiro">
+      <i class="pi pi-info-circle"></i>
+      <span>O parceiro será identificado automaticamente com base no usuário logado.</span>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times"
+        (onClick)="onCancel()"
+        styleClass="p-button-text"
+        [disabled]="uploading()">
+      </p-button>
+      
+      <p-button 
+        label="Enviar Documento" 
+        icon="pi pi-upload"
+        (onClick)="onSubmit()"
+        [disabled]="uploadForm.invalid || uploading()"
+        [loading]="uploading()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
