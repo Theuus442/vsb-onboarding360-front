@@ -1,0 +1,393 @@
+<app-layout>
+  <div class="partners-management">
+    <!-- Hero Header with Stats -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-icon">
+            <i class="pi pi-building"></i>
+          </div>
+          <div class="hero-title-group">
+            <h1 class="hero-title">Parceiros</h1>
+            <p class="hero-subtitle">Gerencie e monitore todos os parceiros do sistema</p>
+          </div>
+        </div>
+        
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div class="stat-value">{{ stats().total }}</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-value">{{ stats().ativos }}</div>
+            <div class="stat-label">Ativos</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-value">{{ stats().pendentes }}</div>
+            <div class="stat-label">Pendentes</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-value">{{ stats().inativos }}</div>
+            <div class="stat-label">Inativos</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="controls-section">
+      <div class="controls-container">
+        <!-- Search and Filters -->
+        <div class="search-filters">
+          <div class="search-wrapper">
+            <div class="search-icon">
+              <i class="pi pi-search"></i>
+            </div>
+            <app-input-busca
+              placeholder="Pesquisar por nome, email ou CNPJ..."
+              [valor]="searchTerm()"
+              (buscarChange)="onSearch($event)"
+              class="search-input">
+            </app-input-busca>
+            @if (searchTerm()) {
+              <button 
+                class="clear-search-btn" 
+                (click)="clearSearch()" 
+                pTooltip="Limpar busca"
+                aria-label="Limpar busca">
+                <i class="pi pi-times"></i>
+              </button>
+            }
+          </div>
+
+          <div class="filter-dropdown">
+            <app-dropdown-moderno
+              [options]="statusOptions"
+              [(ngModel)]="selectedFilter"
+              (selectionChange)="onFilterChange($event?.value)"
+              placeholder="Filtrar por status"
+              [clearable]="true"
+              ariaLabel="Filtrar por status">
+            </app-dropdown-moderno>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-buttons">
+          <button 
+            class="view-toggle-btn" 
+            (click)="toggleViewMode()" 
+            pTooltip="Alternar visualização"
+            [attr.aria-label]="'Alternar para visualização em ' + (viewMode() === 'grid' ? 'lista' : 'grade')">
+            <i class="pi" [ngClass]="viewMode() === 'grid' ? 'pi-th-large' : 'pi-list'"></i>
+          </button>
+          
+          <button 
+            class="action-btn secondary" 
+            (click)="novoParceiro()"
+            aria-label="Adicionar novo parceiro">
+            <i class="pi pi-plus"></i>
+            <span>Novo Parceiro</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+      <!-- Loading State -->
+      @if (loading()) {
+        <div class="loading-section" role="status" aria-label="Carregando parceiros">
+          @for (item of [1,2,3,4,5,6]; track item) {
+            <div class="skeleton-card">
+              <p-skeleton height="200px" borderRadius="1rem"></p-skeleton>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Grid View -->
+      @if (!loading() && viewMode() === 'grid') {
+        @if (filteredParceiros().length > 0) {
+          <div class="partners-grid" role="grid" aria-label="Lista de parceiros em grade">
+            @for (parceiro of filteredParceiros(); track parceiro.id; let i = $index) {
+              <article 
+                class="partner-card" 
+                role="gridcell"
+                [style.animation-delay]="(i * 100) + 'ms'"
+                [attr.aria-label]="'Parceiro ' + (parceiro.nome_fantasia || parceiro.nome)">
+                
+                <header class="card-header">
+                  <div class="partner-avatar">
+                    <p-avatar 
+                      [label]="(parceiro.nome_fantasia || parceiro.nome).charAt(0).toUpperCase()" 
+                      size="large" 
+                      shape="circle"
+                      styleClass="partner-avatar-component"
+                      [attr.aria-label]="'Avatar de ' + (parceiro.nome_fantasia || parceiro.nome)">
+                    </p-avatar>
+                  </div>
+                  
+                  <div class="partner-info">
+                    <h3 class="partner-name" [pTooltip]="parceiro.nome_fantasia || parceiro.nome">
+                      {{ parceiro.nome_fantasia || parceiro.nome }}
+                    </h3>
+                    <p class="partner-cnpj">{{ parceiro.cnpj }}</p>
+                  </div>
+
+                  <div class="card-actions">
+                    <button 
+                      class="action-icon-btn" 
+                      (click)="editarParceiro(parceiro)"
+                      pTooltip="Editar parceiro"
+                      [attr.aria-label]="'Editar parceiro ' + parceiro.nome">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button 
+                      class="action-icon-btn" 
+                      (click)="verUsuarios(parceiro)"
+                      pTooltip="Gerenciar usuários"
+                      [attr.aria-label]="'Gerenciar usuários de ' + parceiro.nome">
+                      <i class="pi pi-users"></i>
+                    </button>
+                    <button
+                      class="action-icon-btn"
+                      [class.warning]="isParceiroAtivo(parceiro)"
+                      [class.success]="!isParceiroAtivo(parceiro)"
+                      (click)="toggleStatus(parceiro)"
+                      [pTooltip]="getStatusTooltip(parceiro)"
+                      [attr.aria-label]="getStatusTooltip(parceiro) + ' ' + (parceiro.nome_fantasia || parceiro.nome)">
+                      <i class="pi" [ngClass]="getStatusIcon(parceiro)"></i>
+                    </button>
+                  </div>
+                </header>
+
+                <p-divider></p-divider>
+
+                <div class="card-body">
+                  <div class="info-grid">
+                    <div class="info-item full-width">
+                      <span class="info-label">Status</span>
+                      <p-tag 
+                        [value]="parceiro.status" 
+                        [severity]="getStatusSeverity(parceiro.status)"
+                        [icon]="getStatusIcon(parceiro)"
+                        styleClass="status-tag">
+                      </p-tag>
+                    </div>
+
+                    @if (parceiro.email) {
+                      <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" [pTooltip]="parceiro.email">{{ parceiro.email }}</span>
+                      </div>
+                    }
+
+                    @if (parceiro.telefone) {
+                      <div class="info-item">
+                        <span class="info-label">Telefone</span>
+                        <span class="info-value">{{ parceiro.telefone }}</span>
+                      </div>
+                    }
+
+                    <div class="info-item">
+                      <span class="info-label">Usuários</span>
+                      <p-badge 
+                        [value]="(parceiro.totalUsuarios || parceiro.total_usuarios || 0).toString()" 
+                        severity="info">
+                      </p-badge>
+                    </div>
+                  </div>
+                </div>
+
+                <footer class="card-footer">
+                  <button
+                    class="toggle-status-btn"
+                    (click)="toggleStatus(parceiro)"
+                    [class.active]="isParceiroAtivo(parceiro)"
+                    [class.warning]="isParceiroAtivo(parceiro)"
+                    [class.success]="!isParceiroAtivo(parceiro)"
+                    [attr.aria-label]="getStatusTooltip(parceiro) + ' ' + (parceiro.nome_fantasia || parceiro.nome)">
+                    <i class="pi" [ngClass]="getStatusIcon(parceiro)"></i>
+                    <span>{{ getStatusAction(parceiro).charAt(0).toUpperCase() + getStatusAction(parceiro).slice(1) }}</span>
+                  </button>
+                  
+                  <button 
+                    class="add-user-btn" 
+                    (click)="adicionarUsuario(parceiro)"
+                    [attr.aria-label]="'Adicionar usuário ao parceiro ' + parceiro.nome">
+                    <i class="pi pi-user-plus"></i>
+                    <span>Adicionar Usuário</span>
+                  </button>
+                </footer>
+              </article>
+            }
+          </div>
+        } @else {
+          <!-- Empty State -->
+          <div class="empty-state" role="status">
+            <div class="empty-content">
+              <div class="empty-icon">
+                <i class="pi pi-building"></i>
+              </div>
+              <h3 class="empty-title">
+                @if (searchTerm() || selectedFilter() !== 'todos') {
+                  Nenhum parceiro encontrado
+                } @else {
+                  Nenhum parceiro cadastrado
+                }
+              </h3>
+              <p class="empty-description">
+                @if (searchTerm() || selectedFilter() !== 'todos') {
+                  Não encontramos parceiros que correspondam aos filtros aplicados.
+                } @else {
+                  Comece adicionando o primeiro parceiro ao sistema.
+                }
+              </p>
+              <div class="empty-actions">
+                @if (searchTerm() || selectedFilter() !== 'todos') {
+                  <button class="action-btn secondary" (click)="clearSearch()">
+                    <i class="pi pi-filter-slash"></i>
+                    <span>Limpar Filtros</span>
+                  </button>
+                }
+                <button class="action-btn primary" (click)="novoParceiro()">
+                  <i class="pi pi-plus"></i>
+                  <span>Novo Parceiro</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Table View -->
+      @if (!loading() && viewMode() === 'table') {
+        <div class="table-container">
+          <p-table 
+            [value]="filteredParceiros()" 
+            [paginator]="false"
+            [responsive]="true"
+            styleClass="partners-table"
+            role="table"
+            aria-label="Tabela de parceiros">
+            
+            <ng-template pTemplate="header">
+              <tr role="row">
+                <th scope="col">Parceiro</th>
+                <th scope="col">CNPJ</th>
+                <th scope="col">Contato</th>
+                <th scope="col">Status</th>
+                <th scope="col">Usuários</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-parceiro>
+              <tr role="row">
+                <td>
+                  <div class="table-partner-info">
+                    <p-avatar 
+                      [label]="(parceiro.nome_fantasia || parceiro.nome).charAt(0).toUpperCase()" 
+                      size="normal" 
+                      shape="circle">
+                    </p-avatar>
+                    <div>
+                      <div class="partner-name">{{ parceiro.nome_fantasia || parceiro.nome }}</div>
+                      <div class="partner-fantasy">{{ parceiro.razao_social || '-' }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ parceiro.cnpj }}</td>
+                <td>
+                  <div class="contact-info">
+                    @if (parceiro.email) {
+                      <div class="contact-item">
+                        <i class="pi pi-envelope"></i>
+                        <span>{{ parceiro.email }}</span>
+                      </div>
+                    }
+                    @if (parceiro.telefone) {
+                      <div class="contact-item">
+                        <i class="pi pi-phone"></i>
+                        <span>{{ parceiro.telefone }}</span>
+                      </div>
+                    }
+                  </div>
+                </td>
+                <td>
+                  <p-tag 
+                    [value]="parceiro.status" 
+                    [severity]="getStatusSeverity(parceiro.status)"
+                    [icon]="getStatusIcon(parceiro.status)"
+                    styleClass="status-tag">
+                  </p-tag>
+                </td>
+                <td>
+                  <p-badge 
+                    [value]="(parceiro.totalUsuarios || parceiro.total_usuarios || 0).toString()" 
+                    severity="info">
+                  </p-badge>
+                </td>
+                <td>
+                  <div class="table-actions">
+                    <button 
+                      class="table-action-btn" 
+                      (click)="editarParceiro(parceiro)"
+                      pTooltip="Editar"
+                      [attr.aria-label]="'Editar ' + parceiro.nome">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button 
+                      class="table-action-btn" 
+                      (click)="verUsuarios(parceiro)"
+                      pTooltip="Usuários"
+                      [attr.aria-label]="'Usuários de ' + parceiro.nome">
+                      <i class="pi pi-users"></i>
+                    </button>
+                    <button
+                      class="table-action-btn"
+                      [class.warning]="isParceiroAtivo(parceiro)"
+                      [class.success]="!isParceiroAtivo(parceiro)"
+                      (click)="toggleStatus(parceiro)"
+                      [pTooltip]="getStatusTooltip(parceiro)"
+                      [attr.aria-label]="getStatusTooltip(parceiro) + ' ' + (parceiro.nome_fantasia || parceiro.nome)">
+                      <i class="pi" [ngClass]="getStatusIcon(parceiro)"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      }
+
+      <!-- Pagination -->
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-section">
+          <app-paginacao
+            [paginaAtual]="currentPage()"
+            [itensPorPagina]="itemsPerPage()"
+            [totalItens]="totalItems()"
+            (mudancaPagina)="onPageChange($event)">
+          </app-paginacao>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Dialogs -->
+  <p-confirmDialog
+    [style]="{width: '450px', maxWidth: '90vw'}"
+    [baseZIndex]="10000"
+    [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
+    [closable]="true"
+    acceptButtonStyleClass="p-button-danger"
+    rejectButtonStyleClass="p-button-secondary">
+  </p-confirmDialog>
+  
+  <p-toast 
+    [showTransitionOptions]="'300ms ease-out'"
+    [hideTransitionOptions]="'250ms ease-in'">
+  </p-toast>
+</app-layout>
