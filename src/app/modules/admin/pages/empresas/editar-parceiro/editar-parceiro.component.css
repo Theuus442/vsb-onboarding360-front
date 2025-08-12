@@ -1,0 +1,547 @@
+/* ===============================
+   EDITAR PARCEIRO - ELEGANT DESIGN
+   =============================== */
+
+.editar-parceiro-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    #0a0a0a 0%, 
+    #1a1a2e 25%, 
+    #16213e 50%, 
+    #0f3460 75%, 
+    #2d1b69 100%
+  );
+  padding: 2rem 0;
+}
+
+/* ================
+   PAGE HEADER
+   ================ */
+
+.page-header {
+  padding: 2rem 0 1rem 0;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.breadcrumb-button {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.breadcrumb-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-4px);
+  color: white;
+}
+
+.breadcrumb-path {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-item {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
+}
+
+.breadcrumb-item.current {
+  color: rgba(139, 92, 246, 0.9);
+  font-weight: 600;
+}
+
+.breadcrumb-path i {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.7rem;
+}
+
+.page-title h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: white;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ================
+   FORM CONTAINER
+   ================ */
+
+.form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.parceiro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ================
+   FORM CARD
+   ================ */
+
+.form-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.card-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.card-header p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+/* ================
+   FORM ROWS & FIELDS
+   ================ */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field.half-width {
+  grid-column: 1;
+  overflow: visible;
+  position: relative;
+  z-index: 10;
+}
+
+.form-field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.02em;
+}
+
+/* ================
+   INPUT STYLING
+   ================ */
+
+::ng-deep .form-field input[pInputText] {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+::ng-deep .form-field input[pInputText]:focus {
+  border-color: rgba(139, 92, 246, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  outline: none;
+}
+
+::ng-deep .form-field input[pInputText]::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ================
+   DROPDOWN STYLING
+   ================ */
+
+::ng-deep .form-field .p-dropdown {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  min-height: 48px;
+  position: relative;
+  z-index: 100;
+}
+
+::ng-deep .form-field .p-dropdown:not(.p-disabled):hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+::ng-deep .form-field .p-dropdown:not(.p-disabled).p-focus {
+  border-color: rgba(139, 92, 246, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  z-index: 150;
+}
+
+::ng-deep .form-field .p-dropdown .p-dropdown-label {
+  color: white;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+}
+
+::ng-deep .form-field .p-dropdown .p-dropdown-label.p-placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+::ng-deep .form-field .p-dropdown .p-dropdown-trigger {
+  color: rgba(255, 255, 255, 0.7);
+  width: 3rem;
+}
+
+/* Ensure dropdown panel appears correctly */
+::ng-deep .form-field .p-dropdown-panel {
+  z-index: 10000 !important;
+  position: fixed !important;
+  margin-top: 4px;
+  min-width: 100%;
+  overflow: visible !important;
+}
+
+/* Fix container overflow issues */
+::ng-deep .editar-parceiro-container,
+::ng-deep .form-container,
+::ng-deep .parceiro-form,
+::ng-deep .form-card,
+::ng-deep .card-body,
+::ng-deep .form-row,
+::ng-deep .form-field {
+  overflow: visible !important;
+  position: relative;
+}
+
+/* Specific fix for dropdown positioning */
+::ng-deep .form-field .p-dropdown-panel {
+  z-index: 999999 !important;
+  position: fixed !important;
+  max-height: 250px !important;
+}
+
+/* Ensure card doesn't clip dropdowns */
+.form-card {
+  overflow: visible !important;
+  z-index: 1;
+}
+
+.card-body {
+  overflow: visible !important;
+}
+
+/* ================
+   ERROR STYLING
+   ================ */
+
+::ng-deep .form-field input.ng-invalid.ng-dirty {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+::ng-deep .form-field .p-dropdown.ng-invalid.ng-dirty {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.error-message {
+  color: #fca5a5;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  animation: slideInError 0.3s ease;
+}
+
+@keyframes slideInError {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================
+   FORM ACTIONS
+   ================ */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  color: white;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.5);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ================
+   LOADING STATE
+   ================ */
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 3rem;
+}
+
+/* ================
+   ERROR STATE
+   ================ */
+
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 3rem 2rem;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.error-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+}
+
+.error-icon i {
+  font-size: 2rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.error-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 1rem 0;
+}
+
+.error-content p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+/* ================
+   RESPONSIVE
+   ================ */
+
+@media (max-width: 768px) {
+  .editar-parceiro-container {
+    padding: 1rem 0;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+  
+  .form-container {
+    padding: 1rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .card-header,
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    padding: 0 1.5rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  .page-title h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .breadcrumb-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .error-content {
+    padding: 2rem 1rem;
+  }
+  
+  .error-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .error-icon i {
+    font-size: 1.5rem;
+  }
+}
+
+/* ================
+   ANIMATIONS
+   ================ */
+
+.form-card {
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================
+   UTILITY CLASSES
+   ================ */
+
+::ng-deep .w-full {
+  width: 100%;
+}

@@ -1,0 +1,218 @@
+<app-layout>
+  <div class="editar-parceiro-container">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="breadcrumb-nav">
+          <button 
+            class="breadcrumb-button" 
+            (click)="voltarParaLista()" 
+            aria-label="Voltar para lista de parceiros">
+            <i class="pi pi-chevron-left"></i>
+          </button>
+          <div class="breadcrumb-path">
+            <span class="breadcrumb-item">Parceiros</span>
+            <i class="pi pi-angle-right"></i>
+            <span class="breadcrumb-item current">Editar</span>
+          </div>
+        </div>
+
+        <div class="page-title">
+          <h1>Editar Parceiro</h1>
+          <p class="page-subtitle" *ngIf="parceiro()">
+            {{ parceiro()?.nome_fantasia }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="carregando()" class="loading-container">
+      <app-carregando
+        message="Carregando dados do parceiro..."
+        size="40px">
+      </app-carregando>
+    </div>
+
+    <!-- Form Content -->
+    <div *ngIf="!carregando() && parceiro()" class="form-container">
+      <form [formGroup]="parceiroForm" (ngSubmit)="onSubmit()" class="parceiro-form">
+        
+        <!-- Card Principal -->
+        <div class="form-card">
+          <div class="card-header">
+            <h3>Informações do Parceiro</h3>
+            <p>Atualize as informações básicas do parceiro</p>
+          </div>
+
+          <div class="card-body">
+            <!-- Nome Fantasia e Razão Social -->
+            <div class="form-row">
+              <div class="form-field">
+                <label for="nome_fantasia">Nome Fantasia *</label>
+                <input
+                  id="nome_fantasia"
+                  type="text"
+                  pInputText
+                  formControlName="nome_fantasia"
+                  placeholder="Digite o nome fantasia"
+                  [class.ng-invalid]="nomeFantasiaInvalido"
+                  [class.ng-dirty]="nomeFantasiaInvalido"
+                />
+                <small *ngIf="nomeFantasiaInvalido" class="error-message">
+                  Nome fantasia é obrigatório (mínimo 2 caracteres)
+                </small>
+              </div>
+
+              <div class="form-field">
+                <label for="razao_social">Razão Social *</label>
+                <input
+                  id="razao_social"
+                  type="text"
+                  pInputText
+                  formControlName="razao_social"
+                  placeholder="Digite a razão social"
+                  [class.ng-invalid]="razaoSocialInvalida"
+                  [class.ng-dirty]="razaoSocialInvalida"
+                />
+                <small *ngIf="razaoSocialInvalida" class="error-message">
+                  Razão social é obrigatória (mínimo 2 caracteres)
+                </small>
+              </div>
+            </div>
+
+            <!-- CNPJ e Email -->
+            <div class="form-row">
+              <div class="form-field">
+                <label for="cnpj">CNPJ *</label>
+                <input
+                  id="cnpj"
+                  type="text"
+                  pInputText
+                  formControlName="cnpj"
+                  placeholder="00.000.000/0000-00"
+                  (input)="onCnpjInput($event)"
+                  maxlength="18"
+                  [class.ng-invalid]="cnpjInvalido"
+                  [class.ng-dirty]="cnpjInvalido"
+                />
+                <small *ngIf="cnpjInvalido" class="error-message">
+                  CNPJ deve estar no formato 00.000.000/0000-00
+                </small>
+              </div>
+
+              <div class="form-field">
+                <label for="email">E-mail *</label>
+                <input
+                  id="email"
+                  type="email"
+                  pInputText
+                  formControlName="email"
+                  placeholder="email@exemplo.com"
+                  [class.ng-invalid]="emailInvalido"
+                  [class.ng-dirty]="emailInvalido"
+                />
+                <small *ngIf="emailInvalido" class="error-message">
+                  E-mail deve ser válido
+                </small>
+              </div>
+            </div>
+
+            <!-- Telefone e Responsável -->
+            <div class="form-row">
+              <div class="form-field">
+                <label for="telefone">Telefone *</label>
+                <input
+                  id="telefone"
+                  type="text"
+                  pInputText
+                  formControlName="telefone"
+                  placeholder="(00) 00000-0000"
+                  (input)="onTelefoneInput($event)"
+                  maxlength="15"
+                  [class.ng-invalid]="telefoneInvalido"
+                  [class.ng-dirty]="telefoneInvalido"
+                />
+                <small *ngIf="telefoneInvalido" class="error-message">
+                  Telefone deve estar no formato (00) 00000-0000
+                </small>
+              </div>
+
+              <div class="form-field">
+                <label for="responsavel_id">Responsável *</label>
+                <p-dropdown
+                  id="responsavel_id"
+                  formControlName="responsavel_id"
+                  [options]="responsaveisOptions"
+                  placeholder="Selecione um responsável"
+                  [class.ng-invalid]="responsavelInvalido"
+                  [class.ng-dirty]="responsavelInvalido"
+                  styleClass="w-full"
+                  appendTo="body">
+                </p-dropdown>
+                <small *ngIf="responsavelInvalido" class="error-message">
+                  Responsável é obrigatório
+                </small>
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="form-row">
+              <div class="form-field half-width">
+                <label for="status">Status *</label>
+                <p-dropdown
+                  id="status"
+                  formControlName="status"
+                  [options]="statusOptions"
+                  placeholder="Selecione o status"
+                  styleClass="w-full"
+                  appendTo="body">
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="voltarParaLista()"
+            [disabled]="salvando()">
+            <i class="pi pi-times"></i>
+            <span>Cancelar</span>
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="salvando() || parceiroForm.invalid">
+            <i class="pi pi-spin pi-spinner" *ngIf="salvando()"></i>
+            <i class="pi pi-check" *ngIf="!salvando()"></i>
+            <span>{{ salvando() ? 'Salvando...' : 'Salvar Alterações' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Erro State -->
+    <div *ngIf="!carregando() && !parceiro()" class="error-state">
+      <div class="error-content">
+        <div class="error-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <h3>Parceiro não encontrado</h3>
+        <p>O parceiro que você está tentando editar não foi encontrado ou não existe.</p>
+        <button class="btn-primary" (click)="voltarParaLista()">
+          <i class="pi pi-arrow-left"></i>
+          <span>Voltar para Lista</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <p-toast position="top-right" [style]="{marginTop: '80px'}"></p-toast>
+</app-layout>

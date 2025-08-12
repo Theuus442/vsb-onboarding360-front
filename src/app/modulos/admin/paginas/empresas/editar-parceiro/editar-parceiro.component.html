@@ -1,0 +1,513 @@
+<app-layout>
+  <div class="partner-edit-page">
+    <!-- Enhanced Background with Particles -->
+    <div class="page-background">
+      <div class="animated-particles">
+        @for (particle of particles; track $index) {
+          <div class="particle" 
+               [style.animation-delay]="$index * 0.3 + 's'"
+               [style.animation-duration]="(4 + $index % 3) + 's'"></div>
+        }
+      </div>
+      
+      <!-- Gradient Orbs -->
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Loading State -->
+    @if (carregando()) {
+      <div class="loading-container">
+        <div class="loading-card">
+          <app-carregando
+            mensagem="Carregando dados do parceiro..."
+            [tamanho]="50">
+          </app-carregando>
+        </div>
+      </div>
+    } @else {
+      <!-- Breadcrumb Navigation -->
+      <div class="breadcrumb-section">
+        <div class="breadcrumb-container">
+          <nav class="breadcrumb-nav">
+            <button class="breadcrumb-button" (click)="voltarParaLista()" aria-label="Voltar">
+              <i class="pi pi-chevron-left"></i>
+            </button>
+            <div class="breadcrumb-path">
+              <span class="breadcrumb-item">Parceiros</span>
+              <i class="pi pi-angle-right"></i>
+              <span class="breadcrumb-item current">Editar</span>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-container">
+          <div class="hero-content">
+            <div class="hero-badge">
+              <i class="pi pi-pencil"></i>
+              <span>Editar Parceiro</span>
+            </div>
+            
+            <h1 class="hero-title">
+              <span class="title-gradient">Atualizar Informações</span>
+            </h1>
+            
+            <p class="hero-description">
+              @if (parceiro()) {
+                Editando dados de <strong>{{ parceiro()?.nome_fantasia || parceiro()?.nome }}</strong>
+              } @else {
+                Modifique as informações do parceiro conforme necessário
+              }
+            </p>
+            
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+              <div class="step active">
+                <div class="step-circle">
+                  <i class="pi pi-building"></i>
+                </div>
+                <span class="step-label">Dados da Empresa</span>
+              </div>
+              <div class="step-line active"></div>
+              <div class="step" [class.active]="formProgress() > 50">
+                <div class="step-circle">
+                  <i class="pi pi-phone"></i>
+                </div>
+                <span class="step-label">Contato</span>
+              </div>
+              <div class="step-line" [class.active]="parceiroForm.valid"></div>
+              <div class="step" [class.active]="parceiroForm.valid">
+                <div class="step-circle">
+                  <i class="pi pi-check" *ngIf="parceiroForm.valid; else stepIcon"></i>
+                  <ng-template #stepIcon>
+                    <i class="pi pi-save"></i>
+                  </ng-template>
+                </div>
+                <span class="step-label">Finalizar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Form Section -->
+      <div class="form-section">
+        <div class="form-container">
+          <form [formGroup]="parceiroForm" (ngSubmit)="onSubmit()" class="enhanced-form">
+            
+            <!-- Form Header -->
+            <div class="form-header">
+              <div class="form-status">
+                <div class="status-indicator" [class.complete]="parceiroForm.valid">
+                  <div class="status-dot"></div>
+                  <span class="status-text">
+                    {{ parceiroForm.valid ? 'Formulário Completo' : 'Preencha os campos' }}
+                  </span>
+                </div>
+                
+                <div class="form-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="formProgress()"></div>
+                  </div>
+                  <span class="progress-text">{{ formProgress() }}% completo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Form Content -->
+            <div class="form-body">
+              
+              <!-- Company Information Card -->
+              <div class="info-card company-info">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <i class="pi pi-building"></i>
+                  </div>
+                  <div class="card-title">
+                    <h3>Informações da Empresa</h3>
+                    <p>Dados corporativos e identificação</p>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="fields-grid">
+                    
+                    <!-- Nome Fantasia -->
+                    <div class="field-container">
+                      <div class="field-wrapper" [class.filled]="parceiroForm.get('nome_fantasia')?.value">
+                        <label for="nome_fantasia" class="floating-label">
+                          <i class="pi pi-building"></i>
+                          Nome Fantasia
+                        </label>
+                        <input
+                          id="nome_fantasia"
+                          type="text"
+                          pInputText
+                          formControlName="nome_fantasia"
+                          placeholder=" "
+                          [class.error]="isCampoInvalido('nome_fantasia')"
+                          [class.success]="isCampoValido('nome_fantasia')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('nome_fantasia')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('nome_fantasia')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('nome_fantasia')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('nome_fantasia') }}
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Razão Social -->
+                    <div class="field-container">
+                      <div class="field-wrapper" [class.filled]="parceiroForm.get('razao_social')?.value">
+                        <label for="razao_social" class="floating-label">
+                          <i class="pi pi-briefcase"></i>
+                          Razão Social
+                        </label>
+                        <input
+                          id="razao_social"
+                          type="text"
+                          pInputText
+                          formControlName="razao_social"
+                          placeholder=" "
+                          [class.error]="isCampoInvalido('razao_social')"
+                          [class.success]="isCampoValido('razao_social')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('razao_social')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('razao_social')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('razao_social')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('razao_social') }}
+                        </div>
+                      }
+                    </div>
+
+                    <!-- CNPJ -->
+                    <div class="field-container">
+                      <div class="field-wrapper" [class.filled]="parceiroForm.get('cnpj')?.value">
+                        <label for="cnpj" class="floating-label">
+                          <i class="pi pi-id-card"></i>
+                          CNPJ
+                        </label>
+                        <input
+                          id="cnpj"
+                          type="text"
+                          pInputText
+                          formControlName="cnpj"
+                          placeholder=" "
+                          (input)="formatarCnpj($event)"
+                          maxlength="18"
+                          [class.error]="isCampoInvalido('cnpj')"
+                          [class.success]="isCampoValido('cnpj')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('cnpj')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('cnpj')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                        <div class="input-mask-hint">00.000.000/0000-00</div>
+                      </div>
+                      
+                      @if (isCampoInvalido('cnpj')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('cnpj') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information Card -->
+              <div class="info-card contact-info">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <i class="pi pi-phone"></i>
+                  </div>
+                  <div class="card-title">
+                    <h3>Informações de Contato</h3>
+                    <p>Dados para comunicação</p>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="fields-grid">
+                    
+                    <!-- Email -->
+                    <div class="field-container full-width">
+                      <div class="field-wrapper" [class.filled]="parceiroForm.get('email')?.value">
+                        <label for="email" class="floating-label">
+                          <i class="pi pi-envelope"></i>
+                          E-mail Corporativo
+                        </label>
+                        <input
+                          id="email"
+                          type="email"
+                          pInputText
+                          formControlName="email"
+                          placeholder=" "
+                          (blur)="validateEmail()"
+                          [class.error]="isCampoInvalido('email')"
+                          [class.success]="isCampoValido('email')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('email')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('email')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('email')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('email') }}
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="field-container">
+                      <div class="field-wrapper" [class.filled]="parceiroForm.get('telefone')?.value">
+                        <label for="telefone" class="floating-label">
+                          <i class="pi pi-phone"></i>
+                          Telefone
+                        </label>
+                        <input
+                          id="telefone"
+                          type="text"
+                          pInputText
+                          formControlName="telefone"
+                          placeholder=" "
+                          (input)="formatarTelefone($event)"
+                          maxlength="15"
+                          [class.error]="isCampoInvalido('telefone')"
+                          [class.success]="isCampoValido('telefone')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('telefone')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('telefone')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                        <div class="input-mask-hint">(00) 00000-0000</div>
+                      </div>
+                      
+                      @if (isCampoInvalido('telefone')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('telefone') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Management Information Card -->
+              <div class="info-card management-info">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <i class="pi pi-cog"></i>
+                  </div>
+                  <div class="card-title">
+                    <h3>Configurações</h3>
+                    <p>Status e responsabilidades</p>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="fields-grid">
+                    
+                    <!-- Status -->
+                    <div class="field-container">
+                      <div class="field-wrapper dropdown-wrapper" [class.filled]="parceiroForm.get('status')?.value">
+                        <label for="status" class="floating-label">
+                          <i class="pi pi-flag"></i>
+                          Status
+                        </label>
+                        
+                        <app-dropdown-moderno
+                          [options]="statusOptions"
+                          placeholder="Selecione o status"
+                          [hasError]="isCampoInvalido('status')"
+                          [hasSuccess]="isCampoValido('status')"
+                          formControlName="status"
+                          ariaLabel="Status do parceiro">
+                        </app-dropdown-moderno>
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('status')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('status')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('status')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('status') }}
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Responsável -->
+                    <div class="field-container">
+                      <div class="field-wrapper dropdown-wrapper" [class.filled]="parceiroForm.get('responsavel_id')?.value">
+                        <label for="responsavel_id" class="floating-label">
+                          <i class="pi pi-user"></i>
+                          Responsável
+                        </label>
+                        
+                        <app-dropdown-moderno
+                          [options]="responsaveisOptions()"
+                          placeholder="Selecione o responsável"
+                          [hasError]="isCampoInvalido('responsavel_id')"
+                          [hasSuccess]="isCampoValido('responsavel_id')"
+                          [disabled]="responsaveis().length === 0"
+                          formControlName="responsavel_id"
+                          ariaLabel="Responsável pela empresa">
+                        </app-dropdown-moderno>
+                        
+                        <div class="field-icons">
+                          @if (responsaveis().length === 0) {
+                            <i class="pi pi-spinner pi-spin loading-icon"></i>
+                          } @else if (isCampoValido('responsavel_id')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('responsavel_id')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (responsaveis().length === 0) {
+                        <div class="field-info">
+                          <i class="pi pi-info-circle"></i>
+                          Carregando responsáveis...
+                        </div>
+                      } @else if (isCampoInvalido('responsavel_id')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('responsavel_id') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Form Actions -->
+            <div class="form-actions">
+              <div class="actions-container">
+                
+                <!-- Cancel Button -->
+                <button
+                  type="button"
+                  class="action-btn cancel-btn"
+                  (click)="voltarParaLista()"
+                  [disabled]="salvando()">
+                  <i class="pi pi-times"></i>
+                  <span>Cancelar</span>
+                </button>
+                
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="action-btn submit-btn"
+                  [disabled]="!canSave()"
+                  [class.loading]="salvando()">
+                  
+                  <div class="btn-content">
+                    @if (salvando()) {
+                      <div class="loading-spinner">
+                        <i class="pi pi-spinner pi-spin"></i>
+                      </div>
+                      <span>Salvando...</span>
+                    } @else {
+                      <i class="pi pi-save"></i>
+                      <span>Salvar Alterações</span>
+                    }
+                  </div>
+                  
+                  <div class="btn-ripple"></div>
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (!carregando() && !parceiro()) {
+      <div class="empty-state">
+        <div class="empty-content">
+          <div class="empty-icon">
+            <i class="pi pi-exclamation-triangle"></i>
+          </div>
+          <h3 class="empty-title">Parceiro não encontrado</h3>
+          <p class="empty-description">
+            O parceiro que você está tentando editar não foi encontrado ou não existe.
+          </p>
+          <div class="empty-actions">
+            <button class="action-btn primary" (click)="voltarParaLista()">
+              <i class="pi pi-arrow-left"></i>
+              <span>Voltar para Lista</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Enhanced Toast -->
+  <p-toast position="top-right" [style]="{marginTop: '80px'}"></p-toast>
+</app-layout>
