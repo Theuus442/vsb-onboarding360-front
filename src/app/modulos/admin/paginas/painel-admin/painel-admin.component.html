@@ -1,0 +1,307 @@
+<app-layout>
+  <div class="admin-dashboard">
+    <!-- Hero Header with Dynamic Stats -->
+    <section class="hero-section" role="banner">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-icon" aria-hidden="true">
+            <i class="pi pi-chart-line"></i>
+          </div>
+          <div class="hero-title-group">
+            <h1 class="hero-title">Dashboard Administrativo</h1>
+            <p class="hero-subtitle">
+              Visão completa e em tempo real do sistema de onboarding
+              <span class="update-indicator">
+                <i class="pi pi-circle-fill" [style.color]="refreshing() ? '#f59e0b' : '#22c55e'"></i>
+                Atualizado {{ getLastUpdateFormatted() }}
+              </span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="hero-stats" role="region" aria-label="Estatísticas principais">
+          @for (stat of estatisticas(); track stat.id) {
+            <article class="stat-card" [ngClass]="getStatCardClass(stat.tipo || 'neutro')"
+                     [attr.aria-label]="stat.titulo + ': ' + stat.valor">
+              <div class="stat-icon" aria-hidden="true">
+                <i [class]="stat.icone"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" [attr.aria-label]="'Valor: ' + stat.valor">{{ stat.valor }}</div>
+                <div class="stat-label">{{ stat.titulo }}</div>
+                @if (stat.percentual_mudanca !== undefined) {
+                  <div class="stat-trend" [ngClass]="getTrendClass(stat.tendencia || 'stable')"
+                       [attr.aria-label]="'Tendência: ' + (stat.tendencia || 'estável') + ', ' + Math.abs(stat.percentual_mudanca) + ' por cento'">
+                    <i class="pi" [ngClass]="getTrendIcon(stat.tendencia || 'stable')" aria-hidden="true"></i>
+                    <span>{{ Math.abs(stat.percentual_mudanca) }}%</span>
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- API Status Section -->
+    @if (!apiConnected()) {
+      <section class="api-status-section">
+        <app-api-status
+          [isConnected]="apiConnected()"
+          [lastError]="apiError()"
+          [apiUrl]="getApiUrl()"
+          (retry)="retryLoadData()">
+        </app-api-status>
+      </section>
+    }
+
+    <!-- Main Content Grid -->
+    <main class="content-section" role="main">
+      <div class="content-grid">
+        
+        <!-- Activities Section -->
+        <div class="dashboard-card activities-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-icon">
+                <i class="pi pi-clock"></i>
+              </div>
+              <div>
+                <h2 class="card-title">Atividades Recentes</h2>
+                <p class="card-subtitle">Últimas ações no sistema</p>
+              </div>
+            </div>
+            <button class="card-action-btn"
+                    title="Ver todas as atividades"
+                    aria-label="Abrir página com todas as atividades">
+              <i class="pi pi-external-link"></i>
+            </button>
+          </div>
+          
+          <div class="card-content">
+            @if (atividadesRecentes().length > 0) {
+              <div class="activities-list">
+                @for (atividade of atividadesRecentes(); track atividade.id; let i = $index) {
+                  <div class="activity-item" [style.animation-delay]="(i * 100) + 'ms'">
+                    <div class="activity-icon" [style.background-color]="atividade.cor">
+                      <i [class]="atividade.icone"></i>
+                    </div>
+                    <div class="activity-content">
+                      <h4 class="activity-title">{{ atividade.titulo }}</h4>
+                      <p class="activity-description">{{ atividade.descricao }}</p>
+                      <div class="activity-meta">
+                        @if (atividade.usuario) {
+                          <span class="activity-user">
+                            <i class="pi pi-user"></i>
+                            {{ atividade.usuario }}
+                          </span>
+                        }
+                        <span class="activity-time">
+                          <i class="pi pi-clock"></i>
+                          {{ formatRelativeTime(atividade.data) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="pi pi-clock"></i>
+                </div>
+                <p class="empty-message">Nenhuma atividade recente</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="dashboard-card documents-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-icon">
+                <i class="pi pi-file"></i>
+              </div>
+              <div>
+                <h2 class="card-title">Documentos Pendentes</h2>
+                <p class="card-subtitle">Aguardando aprovação</p>
+              </div>
+            </div>
+            <button class="card-action-btn"
+                    (click)="verTodosDocumentos()"
+                    title="Ver todos os documentos pendentes"
+                    aria-label="Abrir página com todos os documentos pendentes">
+              <i class="pi pi-external-link"></i>
+            </button>
+          </div>
+          
+          <div class="card-content">
+            @if (documentosPendentes().length > 0) {
+              <div class="documents-list">
+                @for (doc of documentosPendentes(); track doc.id; let i = $index) {
+                  <div class="document-item" [style.animation-delay]="(i * 100) + 'ms'">
+                    <div class="document-info">
+                      <div class="document-icon">
+                        <i class="pi pi-file-pdf"></i>
+                      </div>
+                      <div class="document-details">
+                        <h4 class="document-name">{{ doc.nome }}</h4>
+                        <p class="document-partner">{{ doc.parceiro }}</p>
+                        <div class="document-meta">
+                          <span class="document-type">{{ doc.tipo }}</span>
+                          <span class="document-days">{{ doc.dias_pendente }} dias</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="document-priority" [ngClass]="'priority-' + doc.prioridade">
+                      <i class="pi" [ngClass]="getPriorityIcon(doc.prioridade)"></i>
+                      <span>{{ getPriorityLabel(doc.prioridade) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="pi pi-file"></i>
+                </div>
+                <p class="empty-message">Nenhum documento pendente</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Integration Status Section -->
+        <div class="dashboard-card integration-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-icon">
+                <i class="pi pi-link"></i>
+              </div>
+              <div>
+                <h2 class="card-title">Status das Integrações</h2>
+                <p class="card-subtitle">Monitoramento em tempo real</p>
+              </div>
+            </div>
+            <button class="card-action-btn"
+                    title="Configurar integrações do sistema"
+                    aria-label="Abrir configurações de integração">
+              <i class="pi pi-cog"></i>
+            </button>
+          </div>
+          
+          <div class="card-content">
+            @if (statusIntegracao() && statusIntegracao()!.length > 0) {
+              <div class="integrations-list">
+                @for (integration of statusIntegracao()!; track integration.id; let i = $index) {
+                  <div class="integration-item" [style.animation-delay]="(i * 100) + 'ms'">
+                    <div class="integration-info">
+                      <div class="integration-status" [ngClass]="'status-' + integration.status">
+                        <div class="status-indicator"></div>
+                      </div>
+                      <div class="integration-details">
+                        <h4 class="integration-name">{{ integration.servico }}</h4>
+                        @if (integration.mensagem) {
+                          <p class="integration-message">{{ integration.mensagem }}</p>
+                        }
+                        <div class="integration-meta">
+                          <span class="integration-uptime">
+                            <i class="pi pi-chart-line"></i>
+                            {{ integration.uptime || 'N/A' }}
+                          </span>
+                          @if (integration.tempo_resposta) {
+                            <span class="integration-response">
+                              <i class="pi pi-clock"></i>
+                              {{ integration.tempo_resposta }}ms
+                            </span>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <div class="integration-last-sync">
+                      <i class="pi pi-refresh"></i>
+                      <span>{{ formatRelativeTime(integration.ultima_sincronizacao) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="pi pi-link"></i>
+                </div>
+                <p class="empty-message">Nenhuma integração configurada</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div class="dashboard-card quick-access-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-icon">
+                <i class="pi pi-bolt"></i>
+              </div>
+              <div>
+                <h2 class="card-title">Acesso Rápido</h2>
+                <p class="card-subtitle">Ações frequentes do sistema</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-content">
+            @if (acessoRapido().length > 0) {
+              <div class="quick-access-grid">
+                @for (item of acessoRapido(); track item.id; let i = $index) {
+                  <button 
+                    class="quick-access-item" 
+                    (click)="onAcessoRapidoClick(item)"
+                    [disabled]="!item.ativo"
+                    [style.animation-delay]="(i * 100) + 'ms'">
+                    <div class="quick-access-icon" [style.background-color]="item.cor">
+                      <i class="pi" [ngClass]="'pi-' + item.icone"></i>
+                    </div>
+                    <div class="quick-access-content">
+                      <h4 class="quick-access-title">{{ item.titulo }}</h4>
+                      <p class="quick-access-description">{{ item.descricao }}</p>
+                      @if (item.contador !== undefined) {
+                        <div class="quick-access-badge">
+                          {{ item.contador }}
+                        </div>
+                      }
+                    </div>
+                    <div class="quick-access-arrow">
+                      <i class="pi pi-arrow-right"></i>
+                    </div>
+                  </button>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="pi pi-bolt"></i>
+                </div>
+                <p class="empty-message">Nenhuma ação rápida configurada</p>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-overlay">
+        <app-carregando 
+          mensagem="Carregando dashboard..."
+          submensagem="Obtendo dados em tempo real"
+          [tamanho]="60">
+        </app-carregando>
+      </div>
+    }
+
+  </div>
+</app-layout>
