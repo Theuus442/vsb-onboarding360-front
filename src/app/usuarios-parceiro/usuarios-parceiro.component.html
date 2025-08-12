@@ -1,0 +1,204 @@
+<app-layout>
+  <div class="usuarios-parceiro-page">
+    
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="breadcrumb-nav">
+          <button 
+            class="breadcrumb-button" 
+            (click)="voltarParaParceiros()" 
+            aria-label="Voltar para parceiros">
+            <i class="pi pi-chevron-left"></i>
+          </button>
+          <div class="breadcrumb-path">
+            <span class="breadcrumb-item">Parceiros</span>
+            <i class="pi pi-angle-right"></i>
+            <span class="breadcrumb-item current">Usuários</span>
+          </div>
+        </div>
+
+        <div class="page-title">
+          <h1>Usuários do Parceiro</h1>
+          <p class="page-subtitle" *ngIf="nomeFantasia()">
+            {{ nomeFantasia() }}
+          </p>
+        </div>
+
+        <div class="header-actions">
+          <button
+            p-button
+            type="button"
+            icon="pi pi-user-plus"
+            label="Novo Usuário"
+            class="p-button-primary custom-btn-primary force-style"
+            (click)="novoUsuario()"
+            [disabled]="carregando()">
+            <i class="pi pi-user-plus"></i>
+            <span>Novo Usuário</span>
+          </button>
+          <button
+            p-button
+            type="button"
+            icon="pi pi-refresh"
+            label="Atualizar"
+            class="p-button-outlined custom-btn-outlined force-style"
+            (click)="recarregar()"
+            [disabled]="carregando()">
+            <i class="pi pi-refresh"></i>
+            <span>Atualizar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="page-content">
+      
+      <!-- Error State -->
+      <div class="error-container" *ngIf="erro() && !carregando()">
+        <p-message
+          severity="error"
+          [text]="erro()!">
+        </p-message>
+        <button 
+          p-button 
+          type="button" 
+          label="Tentar novamente" 
+          icon="pi pi-refresh" 
+          class="p-button-outlined"
+          (click)="recarregar()">
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="carregando()">
+        <div class="data-card">
+          <div class="card-header-skeleton">
+            <p-skeleton width="200px" height="24px"></p-skeleton>
+            <p-skeleton width="100px" height="16px"></p-skeleton>
+          </div>
+          
+          <div class="skeleton-table">
+            <div class="skeleton-row" *ngFor="let item of [1,2,3,4,5]">
+              <p-skeleton width="100%" height="48px"></p-skeleton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-container" *ngIf="!carregando() && !erro()">
+        <div class="data-card">
+          <div class="card-header">
+            <div class="card-title">
+              <h3>Lista de Usuários</h3>
+              <span class="total-count">{{ usuarios().length }} usu��rios encontrados</span>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="usuarios().length === 0">
+            <div class="empty-content">
+              <i class="pi pi-users empty-icon"></i>
+              <h3>Nenhum usuário encontrado</h3>
+              <p>Este parceiro ainda não possui usuários cadastrados.</p>
+            </div>
+          </div>
+
+          <!-- Users Table -->
+          <div *ngIf="usuarios().length > 0">
+            <p-table 
+              [value]="usuarios()" 
+              [paginator]="true" 
+              [rows]="10"
+              [rowsPerPageOptions]="[5, 10, 20]"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuários"
+              [tableStyle]="{ 'min-width': '50rem' }"
+              styleClass="p-datatable-gridlines">
+              
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="nome">
+                    Nome <p-sortIcon field="nome"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="email">
+                    E-mail <p-sortIcon field="email"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="papel">
+                    Papel <p-sortIcon field="papel"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="departamento">
+                    Departamento <p-sortIcon field="departamento"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="criado_em">
+                    Criado em <p-sortIcon field="criado_em"></p-sortIcon>
+                  </th>
+                  <th>Ações</th>
+                </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="body" let-usuario>
+                <tr>
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">
+                        {{ usuario.nome.charAt(0).toUpperCase() }}
+                      </div>
+                      <span class="user-name">{{ usuario.nome }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="user-email">{{ usuario.email }}</span>
+                  </td>
+                  <td>
+                    <p-tag 
+                      [value]="getPapelLabel(usuario.papel)"
+                      [severity]="getSeverityByPapel(usuario.papel)">
+                    </p-tag>
+                  </td>
+                  <td>
+                    <span class="department-name">{{ usuario.departamento }}</span>
+                  </td>
+                  <td>
+                    <span class="date-info">{{ formatarData(usuario.criado_em) }}</span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button
+                        p-button
+                        type="button"
+                        icon="pi pi-envelope"
+                        class="p-button-outlined p-button-sm email-button"
+                        (click)="enviarEmail(usuario)"
+                        pTooltip="Enviar email para {{ usuario.nome }}"
+                        tooltipPosition="top"
+                        aria-label="Enviar email">
+                        <i class="pi pi-envelope"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="6" class="text-center">
+                    <div class="empty-state-inline">
+                      <i class="pi pi-search"></i>
+                      <span>Nenhum usuário encontrado</span>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <p-toast position="top-right" [style]="{marginTop: '80px'}"></p-toast>
+</app-layout>
