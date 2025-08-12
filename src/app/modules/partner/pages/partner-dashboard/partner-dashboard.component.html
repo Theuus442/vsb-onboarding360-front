@@ -1,0 +1,682 @@
+<app-layout>
+  <!-- Toast para notificações -->
+  <p-toast></p-toast>
+
+  <div class="conteudo-painel">
+    
+    <!-- Cabeçalho da Página -->
+    <div class="cabecalho-pagina">
+      <h1 class="titulo-pagina">Painel do Parceiro</h1>
+      <p class="subtitulo-pagina">Acompanhe seu processo de onboarding e gerencie sua conta</p>
+
+      <!-- Indicador de última atualização -->
+      <div *ngIf="ultimaAtualizacao() && !carregando()" class="ultima-atualizacao">
+        <i class="pi pi-clock"></i>
+        <span>Última atualização: {{ formatarUltimaAtualizacao() }}</span>
+        <button
+          class="btn-refresh"
+          (click)="forcarAtualizacao()"
+          title="Atualizar dados">
+          <i class="pi pi-refresh"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="carregando()" class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Estado de Erro Elegante -->
+    <div *ngIf="!carregando() && !dadosParceiro()" class="error-state">
+      <div class="error-content">
+        <div class="error-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <h3 class="error-title">Ops! Algo deu errado</h3>
+        <p class="error-message">Não foi possível carregar os dados do seu painel. Verifique sua conexão e tente novamente.</p>
+        <button
+          class="btn-retry"
+          (click)="carregarDadosParceiro()">
+          <i class="pi pi-refresh"></i>
+          <span>Tentar Novamente</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!carregando() && dadosParceiro()">
+
+      <!-- Seção de Dados da Empresa -->
+      <section class="secao-dados-parceiro" aria-labelledby="titulo-dados-parceiro">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-dados-parceiro" class="titulo-secao">Dados da Empresa</h2>
+          <p class="subtitulo-secao">Informações principais da sua empresa</p>
+        </div>
+        
+        <div class="dados-grid">
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-building"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Nome Fantasia</h3>
+              <p class="dado-value">{{ dadosParceiro()?.empresa?.nome_fantasia || 'Não informado' }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">CNPJ</h3>
+              <p class="dado-value">{{ dadosParceiro()?.empresa?.cnpj || 'Não informado' }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-briefcase"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Razão Social</h3>
+              <p class="dado-value">{{ dadosParceiro()?.empresa?.razao_social || 'Não informado' }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-envelope"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">E-mail</h3>
+              <p class="dado-value">{{ dadosParceiro()?.empresa?.email || 'Não informado' }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-phone"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Telefone</h3>
+              <p class="dado-value">{{ dadosParceiro()?.empresa?.telefone || 'Não informado' }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Status</h3>
+              <p-tag
+                [value]="dadosParceiro()?.empresa?.status"
+                [severity]="getSeverityStatus(dadosParceiro()?.empresa?.status)">
+              </p-tag>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-calendar"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Data de Cadastro</h3>
+              <p class="dado-value">{{ formatarDataCriacao(dadosParceiro()?.empresa?.created_at || '') }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Usuário Atual</h3>
+              <p class="dado-value">{{ dadosParceiro()?.perfil?.nome || 'Não identificado' }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção de Progresso do Onboarding -->
+      <section class="secao-progresso" aria-labelledby="titulo-progresso">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-progresso" class="titulo-secao">Progresso do Onboarding</h2>
+          <p class="subtitulo-secao">Acompanhe o andamento do seu processo de integração</p>
+        </div>
+        
+        <div class="progresso-card">
+          <div class="progresso-header">
+            <div class="progresso-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ progressoChecklist().concluidos }}</span>
+                <span class="stat-label">Concluídas</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ progressoChecklist().total - progressoChecklist().concluidos }}</span>
+                <span class="stat-label">Pendentes</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ progressoChecklist().porcentagem }}%</span>
+                <span class="stat-label">Completo</span>
+              </div>
+            </div>
+            <div class="progresso-bar-container">
+              <p-progressBar 
+                [value]="progressoChecklist().porcentagem"
+                [showValue]="false"
+                styleClass="custom-progress">
+              </p-progressBar>
+              <span class="progresso-text">{{ progressoChecklist().concluidos }}/{{ progressoChecklist().total }} etapas concluídas</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grade de Conteúdo Principal -->
+      <div class="grade-conteudo">
+        
+        <!-- Coluna Esquerda -->
+        <div class="coluna-esquerda">
+          
+          <!-- Seção do Checklist -->
+          <section class="secao-checklist">
+            <div class="secao-titulo">
+              <h3>Checklist de Atividades</h3>
+              <p>Etapas necessárias para completar seu onboarding</p>
+            </div>
+            
+            <div class="checklist-container">
+              <div 
+                *ngFor="let item of dadosParceiro()?.checklist || []" 
+                class="checklist-item-card"
+                [class.completed]="item.status === 'concluido'"
+                [class.in-progress]="item.status === 'em_andamento'"
+                [class.blocked]="item.status === 'bloqueado'">
+                
+                <div class="item-status-icon">
+                  <i [class]="getChecklistIcon(item.status)"></i>
+                </div>
+                
+                <div class="item-info">
+                  <h4>{{ item.titulo }}</h4>
+                  <p>{{ item.descricao }}</p>
+                  <div class="item-badges">
+                    <p-tag 
+                      [value]="item.status" 
+                      [severity]="getSeverityStatus(item.status)"
+                      styleClass="status-badge">
+                    </p-tag>
+                    <span *ngIf="item.obrigatorio" class="required-badge">Obrigatório</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mensagem quando não há checklist -->
+              <div *ngIf="!dadosParceiro()?.checklist?.length" class="empty-checklist">
+                <i class="pi pi-list"></i>
+                <p>Nenhuma atividade de checklist disponível no momento.</p>
+              </div>
+            </div>
+          </section>
+          
+        </div>
+
+        <!-- Coluna Direita -->
+        <div class="coluna-direita">
+          
+          <!-- Seção de Documentos Necessários -->
+          <section class="secao-documentos-necessarios">
+            <div class="secao-titulo">
+              <div class="titulo-documentos">
+                <div>
+                  <h3>Documentos Necessários</h3>
+                  <p>Documentos obrigatórios e opcionais para completar o cadastro</p>
+                </div>
+
+                <!-- Filtros de Documentos -->
+                <div class="filtros-documentos">
+                  <button
+                    class="filtro-btn"
+                    [class.active]="filtroDocumento() === 'todos'"
+                    (click)="alterarFiltro('todos')">
+                    Todos ({{ documentosComStatus().length }})
+                  </button>
+                  <button
+                    class="filtro-btn"
+                    [class.active]="filtroDocumento() === 'obrigatorios'"
+                    (click)="alterarFiltro('obrigatorios')">
+                    Obrigatórios ({{ estatisticasDocumentos().totalObrigatorios }})
+                  </button>
+                  <button
+                    class="filtro-btn"
+                    [class.active]="filtroDocumento() === 'enviados'"
+                    (click)="alterarFiltro('enviados')">
+                    Enviados ({{ estatisticasDocumentos().totalEnviados }})
+                  </button>
+                  <button
+                    class="filtro-btn"
+                    [class.active]="filtroDocumento() === 'pendentes'"
+                    (click)="alterarFiltro('pendentes')">
+                    Pendentes ({{ estatisticasDocumentos().totalObrigatorios - estatisticasDocumentos().obrigatoriosCompletos }})
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Estatísticas dos Documentos -->
+            <div class="documentos-stats">
+              <div class="stat-card">
+                <div class="stat-icon obrigatorios">
+                  <i class="pi pi-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number">{{ estatisticasDocumentos().obrigatoriosCompletos }}/{{ estatisticasDocumentos().totalObrigatorios }}</span>
+                  <span class="stat-label">Obrigatórios</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon enviados">
+                  <i class="pi pi-upload"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number">{{ estatisticasDocumentos().totalEnviados }}</span>
+                  <span class="stat-label">Enviados</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon progresso">
+                  <i class="pi pi-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                  <span class="stat-number">{{ estatisticasDocumentos().porcentagemCompleta }}%</span>
+                  <span class="stat-label">Completo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Barra de Progresso dos Documentos Obrigatórios -->
+            <div class="progresso-documentos">
+              <div class="progresso-header">
+                <h4>Progresso dos Documentos Obrigatórios</h4>
+                <span class="progresso-texto">
+                  {{ estatisticasDocumentos().obrigatoriosCompletos }} de {{ estatisticasDocumentos().totalObrigatorios }} documentos enviados
+                </span>
+              </div>
+              <div class="progresso-bar-container">
+                <p-progressBar
+                  [value]="estatisticasDocumentos().porcentagemCompleta"
+                  [showValue]="false"
+                  styleClass="custom-documentos-progress">
+                </p-progressBar>
+              </div>
+              <div class="progresso-mensagem">
+                <p *ngIf="estatisticasDocumentos().porcentagemCompleta === 100" class="mensagem-sucesso">
+                  <i class="pi pi-check-circle"></i>
+                  Parabéns! Todos os documentos obrigatórios foram enviados.
+                </p>
+                <p *ngIf="estatisticasDocumentos().porcentagemCompleta < 100" class="mensagem-pendente">
+                  <i class="pi pi-info-circle"></i>
+                  Ainda faltam {{ estatisticasDocumentos().totalObrigatorios - estatisticasDocumentos().obrigatoriosCompletos }} documento(s) obrigatório(s).
+                </p>
+              </div>
+            </div>
+
+            <!-- Cards de Documentos -->
+            <div class="documentos-grid" *ngIf="documentosFiltrados().length > 0">
+              <div
+                *ngFor="let doc of documentosFiltrados()"
+                class="documento-card"
+                [class.obrigatorio]="doc.obrigatorio"
+                [class.enviado]="doc.documentoEnviado"
+                [class.aprovado]="doc.documentoEnviado?.status === 'aprovado'"
+                [class.pendente]="doc.documentoEnviado?.status === 'pendente'"
+                [class.rejeitado]="doc.documentoEnviado?.status === 'rejeitado'">
+
+                <div class="documento-header">
+                  <div class="documento-icon-container">
+                    <i [class]="doc.icon" class="documento-tipo-icon"></i>
+                    <div *ngIf="doc.obrigatorio" class="badge-obrigatorio">Obrigatório</div>
+                  </div>
+
+                  <div class="documento-status">
+                    <p-tag
+                      *ngIf="doc.documentoEnviado"
+                      [value]="doc.documentoEnviado.status"
+                      [severity]="getSeverityStatus(doc.documentoEnviado.status)">
+                    </p-tag>
+                    <span *ngIf="!doc.documentoEnviado && doc.obrigatorio" class="status-pendente">Pendente</span>
+                    <span *ngIf="!doc.documentoEnviado && !doc.obrigatorio" class="status-opcional">Opcional</span>
+                  </div>
+                </div>
+
+                <div class="documento-content">
+                  <h4 class="documento-titulo">{{ doc.titulo }}</h4>
+                  <p class="documento-descricao">{{ doc.descricao }}</p>
+
+                  <div *ngIf="doc.exemplo" class="documento-exemplo">
+                    <small><i class="pi pi-info-circle"></i> Exemplo: {{ doc.exemplo }}</small>
+                  </div>
+
+                  <!-- Informações do documento enviado -->
+                  <div *ngIf="doc.documentoEnviado" class="documento-enviado-info">
+                    <div class="arquivo-enviado">
+                      <i class="pi pi-file-pdf"></i>
+                      <span>{{ doc.documentoEnviado.nome }}</span>
+                    </div>
+                    <small class="data-envio">
+                      Enviado em {{ formatarDataCriacao(doc.documentoEnviado.created_at) }}
+                    </small>
+                  </div>
+                </div>
+
+                <div class="documento-actions">
+                  <!-- Ações quando documento não foi enviado -->
+                  <button
+                    *ngIf="!doc.documentoEnviado"
+                    class="btn-upload"
+                    (click)="abrirUploadDocumento(doc)">
+                    <i class="pi pi-upload"></i>
+                    Enviar {{ doc.obrigatorio ? 'Agora' : 'Documento' }}
+                  </button>
+
+                  <!-- Ações quando documento foi enviado -->
+                  <div *ngIf="doc.documentoEnviado" class="acoes-documento-enviado">
+                    <button
+                      class="action-btn"
+                      (click)="visualizarDocumento(doc.documentoEnviado)"
+                      title="Visualizar documento">
+                      <i class="pi pi-eye"></i>
+                    </button>
+                    <button
+                      class="action-btn"
+                      (click)="downloadDocumento(doc.documentoEnviado)"
+                      title="Download do documento">
+                      <i class="pi pi-download"></i>
+                    </button>
+                    <button
+                      class="action-btn action-btn-secondary"
+                      (click)="abrirUploadDocumento(doc)"
+                      title="Enviar nova versão">
+                      <i class="pi pi-refresh"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mensagens para filtros vazios -->
+            <div *ngIf="documentosFiltrados().length === 0" class="filtro-vazio">
+              <div class="filtro-vazio-content">
+                <i class="pi pi-filter"></i>
+                <h4>Nenhum documento encontrado</h4>
+                <p *ngIf="filtroDocumento() === 'enviados'">
+                  Você ainda não enviou nenhum documento. Comece enviando os documentos obrigatórios.
+                </p>
+                <p *ngIf="filtroDocumento() === 'pendentes'">
+                  Parabéns! Todos os documentos obrigatórios foram enviados.
+                </p>
+                <p *ngIf="filtroDocumento() === 'obrigatorios'">
+                  Não há documentos obrigatórios configurados no momento.
+                </p>
+                <button
+                  *ngIf="filtroDocumento() !== 'todos'"
+                  class="btn-voltar-todos"
+                  (click)="alterarFiltro('todos')">
+                  Ver Todos os Documentos
+                </button>
+              </div>
+            </div>
+
+            <!-- Botão para upload geral -->
+            <div class="upload-geral">
+              <button
+                class="btn-upload-geral"
+                (click)="abrirModalUpload()">
+                <i class="pi pi-plus"></i>
+                Enviar Outro Documento
+              </button>
+            </div>
+          </section>
+          
+        </div>
+        
+      </div>
+
+      <!-- Divisor de Seção -->
+      <div class="divisor-secao"></div>
+
+      <!-- Seção de Usuários (apenas para admin_parceiro) -->
+      <section *ngIf="isAdminParceiro()" class="secao-usuarios" aria-labelledby="titulo-usuarios">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-usuarios" class="titulo-secao">Gestão de Usuários</h2>
+          <p class="subtitulo-secao">Gerencie os usuários da sua empresa no sistema</p>
+        </div>
+        
+        <div class="usuarios-card">
+          <div class="usuarios-header">
+            <div class="usuarios-info">
+              <h3>Usuários Cadastrados</h3>
+              <p>{{ dadosParceiro()?.usuarios?.length || 0 }} usuários ativos</p>
+            </div>
+            <button 
+              class="btn-primary"
+              (click)="abrirModalUsuario()">
+              <i class="pi pi-plus"></i>
+              Adicionar Usuário
+            </button>
+          </div>
+          
+          <div class="usuarios-table-wrapper">
+            <table class="usuarios-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Papel</th>
+                  <th>Departamento</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let usuario of dadosParceiro()?.usuarios || []">
+                  <td>{{ usuario.nome }}</td>
+                  <td>{{ usuario.email }}</td>
+                  <td>
+                    <p-tag 
+                      [value]="usuario.papel" 
+                      severity="info">
+                    </p-tag>
+                  </td>
+                  <td>{{ usuario.departamento || 'Não informado' }}</td>
+                  <td>
+                    <p-tag 
+                      [value]="usuario.status" 
+                      [severity]="getSeverityStatus(usuario.status)">
+                    </p-tag>
+                  </td>
+                  <td>
+                    <button 
+                      class="action-btn action-btn-danger"
+                      (click)="removerUsuario(usuario)"
+                      title="Remover usuário">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Mensagem quando não há usuários -->
+            <div *ngIf="!dadosParceiro()?.usuarios?.length" class="empty-users">
+              <i class="pi pi-users"></i>
+              <p>Nenhum usuário cadastrado ainda.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Modal para Adicionar Usuário -->
+    <p-dialog 
+      header="Adicionar Novo Usuário" 
+      [(visible)]="showUserModal"
+      [modal]="true" 
+      [style]="{width: '450px'}"
+      [closable]="true">
+      
+      <form class="user-form">
+        <div class="form-field">
+          <label for="nome">Nome *</label>
+          <input 
+            type="text" 
+            id="nome"
+            pInputText 
+            [(ngModel)]="novoUsuario().nome"
+            name="nome"
+            placeholder="Digite o nome completo"
+            class="w-full">
+        </div>
+
+        <div class="form-field">
+          <label for="email">E-mail *</label>
+          <input 
+            type="email" 
+            id="email"
+            pInputText 
+            [(ngModel)]="novoUsuario().email"
+            name="email"
+            placeholder="Digite o e-mail"
+            class="w-full">
+        </div>
+
+        <div class="form-field">
+          <label for="senha">Senha *</label>
+          <p-password 
+            [(ngModel)]="novoUsuario().senha"
+            name="senha"
+            placeholder="Digite a senha"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="w-full">
+          </p-password>
+        </div>
+
+        <div class="form-field">
+          <label for="papel">Papel *</label>
+          <p-dropdown 
+            [(ngModel)]="novoUsuario().papel"
+            name="papel"
+            [options]="opcoesRole()"
+            placeholder="Selecione o papel"
+            styleClass="w-full">
+          </p-dropdown>
+        </div>
+
+        <div class="form-field">
+          <label for="departamento">Departamento *</label>
+          <p-dropdown 
+            [(ngModel)]="novoUsuario().departamento"
+            name="departamento"
+            [options]="opcoesDepartamento()"
+            placeholder="Selecione o departamento"
+            styleClass="w-full">
+          </p-dropdown>
+        </div>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <div class="modal-actions">
+          <p-button 
+            label="Cancelar" 
+            icon="pi pi-times"
+            styleClass="p-button-text"
+            (onClick)="cancelarUsuario()">
+          </p-button>
+          <p-button 
+            label="Salvar" 
+            icon="pi pi-check"
+            (onClick)="salvarUsuario()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-dialog>
+
+    <!-- Modal para Upload de Documento -->
+    <p-dialog 
+      header="Enviar Documento" 
+      [(visible)]="showUploadModal"
+      [modal]="true" 
+      [style]="{width: '500px'}"
+      [closable]="true">
+      
+      <form class="upload-form">
+        <div class="form-field">
+          <label for="nomeDocumento">Nome do Documento *</label>
+          <input 
+            type="text" 
+            id="nomeDocumento"
+            pInputText 
+            [(ngModel)]="nomeDocumento"
+            name="nomeDocumento"
+            placeholder="Digite o nome do documento"
+            class="w-full">
+        </div>
+
+        <div class="form-field">
+          <label>Arquivo *</label>
+          <p-fileUpload 
+            mode="basic" 
+            chooseLabel="Selecionar Arquivo"
+            [auto]="false"
+            [multiple]="false"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            maxFileSize="10000000"
+            (onSelect)="onArquivoSelecionado($event)"
+            styleClass="w-full">
+          </p-fileUpload>
+          <small class="file-help">
+            Formatos aceitos: PDF, DOC, DOCX, JPG, JPEG, PNG (máx. 10MB)
+          </small>
+        </div>
+
+        <div *ngIf="arquivoSelecionado()" class="arquivo-selecionado">
+          <div class="arquivo-info">
+            <i class="pi pi-file"></i>
+            <div>
+              <strong>{{ arquivoSelecionado()?.name }}</strong>
+              <br>
+              <small>{{ formatarTamanhoArquivo(arquivoSelecionado()?.size) }}</small>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <div class="modal-actions">
+          <p-button 
+            label="Cancelar" 
+            icon="pi pi-times"
+            styleClass="p-button-text"
+            (onClick)="cancelarUpload()"
+            [disabled]="uploadandoDocumento()">
+          </p-button>
+          <p-button 
+            label="Enviar" 
+            icon="pi pi-upload"
+            (onClick)="uploadDocumento()"
+            [disabled]="uploadandoDocumento()"
+            [loading]="uploadandoDocumento()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-dialog>
+
+  </div>
+</app-layout>

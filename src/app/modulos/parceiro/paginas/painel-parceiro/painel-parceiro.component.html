@@ -1,0 +1,416 @@
+<app-layout>
+  <!-- Toast para notificações -->
+  <p-toast></p-toast>
+
+  <div class="conteudo-painel">
+    
+    <!-- Cabeçalho da Página -->
+    <div class="cabecalho-pagina">
+      <h1 class="titulo-pagina">Painel do Parceiro</h1>
+      <p class="subtitulo-pagina">Acompanhe seu processo de onboarding e gerencie sua conta</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="carregando()" class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Estado de Erro Elegante -->
+    <div *ngIf="!carregando() && !dadosParceiro()" class="error-state">
+      <div class="error-content">
+        <div class="error-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <h3 class="error-title">Ops! Algo deu errado</h3>
+        <p class="error-message">Não foi possível carregar os dados do seu painel. Verifique sua conexão e tente novamente.</p>
+        <button
+          class="btn-retry"
+          (click)="carregarDadosParceiro()">
+          <i class="pi pi-refresh"></i>
+          <span>Tentar Novamente</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!carregando() && dadosParceiro() && dadosParceiro()?.parceiro">
+
+      <!-- Seção de Dados do Parceiro -->
+      <section class="secao-dados-parceiro" aria-labelledby="titulo-dados-parceiro">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-dados-parceiro" class="titulo-secao">Dados da Empresa</h2>
+          <p class="subtitulo-secao">Informações principais da sua empresa</p>
+        </div>
+        
+        <div class="dados-grid">
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-building"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Nome Fantasia</h3>
+              <p class="dado-value">{{ dadosParceiro()?.parceiro?.nome_fantasia }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">CNPJ</h3>
+              <p class="dado-value">{{ dadosParceiro()?.parceiro?.cnpj }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-briefcase"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Razão Social</h3>
+              <p class="dado-value">{{ dadosParceiro()?.parceiro?.razao_social }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-envelope"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">E-mail</h3>
+              <p class="dado-value">{{ dadosParceiro()?.parceiro?.email }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-phone"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Telefone</h3>
+              <p class="dado-value">{{ dadosParceiro()?.parceiro?.telefone }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Status</h3>
+              <p-tag
+                [value]="dadosParceiro()?.parceiro?.status"
+                [severity]="getSeverityStatus(dadosParceiro()?.parceiro?.status)">
+              </p-tag>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-calendar"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Data de Cadastro</h3>
+              <p class="dado-value">{{ dadosParceiro()?.parceiro?.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          </div>
+
+          <div class="dado-card">
+            <div class="dado-icon">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="dado-content">
+              <h3 class="dado-label">Responsável ID</h3>
+              <p class="dado-value">#{{ dadosParceiro()?.parceiro?.responsavel_id }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção de Progresso do Onboarding -->
+      <section class="secao-progresso" aria-labelledby="titulo-progresso">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-progresso" class="titulo-secao">Progresso do Onboarding</h2>
+          <p class="subtitulo-secao">Acompanhe o andamento do seu processo de integração</p>
+        </div>
+        
+        <div class="progresso-card">
+          <div class="progresso-header">
+            <div class="progresso-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ progressoChecklist.concluidos }}</span>
+                <span class="stat-label">Concluídas</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ progressoChecklist.total - progressoChecklist.concluidos }}</span>
+                <span class="stat-label">Pendentes</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ progressoChecklist.porcentagem }}%</span>
+                <span class="stat-label">Completo</span>
+              </div>
+            </div>
+            <div class="progresso-bar-container">
+              <div class="progresso-bar">
+                <div 
+                  class="progresso-fill" 
+                  [style.width.%]="progressoChecklist.porcentagem">
+                </div>
+              </div>
+              <span class="progresso-text">{{ progressoChecklist.concluidos }}/{{ progressoChecklist.total }} etapas concluídas</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grade de Conteúdo Principal -->
+      <div class="grade-conteudo">
+        
+        <!-- Coluna Esquerda -->
+        <div class="coluna-esquerda">
+          
+          <!-- Seção do Checklist -->
+          <section class="secao-checklist">
+            <div class="secao-titulo">
+              <h3>Checklist de Atividades</h3>
+              <p>Etapas necessárias para completar seu onboarding</p>
+            </div>
+            
+            <div class="checklist-container">
+              <div 
+                *ngFor="let item of dadosParceiro()?.checklist" 
+                class="checklist-item-card"
+                [class.completed]="item.concluido"
+                [class.in-progress]="!item.concluido && !item.obrigatorio"
+                [class.blocked]="!item.concluido && item.obrigatorio">
+                
+                <div class="item-status-icon">
+                  <i [class]="getChecklistIcon(item.concluido ? 'concluido' : 'pendente')"></i>
+                </div>
+                
+                <div class="item-info">
+                  <h4>{{ item.titulo }}</h4>
+                  <p>{{ item.descricao }}</p>
+                  <div class="item-badges">
+                    <p-tag 
+                      [value]="item.concluido ? 'concluido' : 'pendente'" 
+                      [severity]="getSeverityStatus(item.concluido ? 'concluido' : 'pendente')"
+                      styleClass="status-badge">
+                    </p-tag>
+                    <span *ngIf="item.obrigatorio" class="required-badge">Obrigatório</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+        </div>
+
+        <!-- Coluna Direita -->
+        <div class="coluna-direita">
+          
+          <!-- Seção de Documentos -->
+          <section class="secao-documentos-parceiro">
+            <div class="secao-titulo">
+              <h3>Documentos Enviados</h3>
+              <p>Status dos seus documentos no processo de análise</p>
+            </div>
+            
+            <div class="documentos-container">
+              <div class="documentos-table-wrapper">
+                <table class="documentos-table">
+                  <thead>
+                    <tr>
+                      <th>Documento</th>
+                      <th>Status</th>
+                      <th>Data</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let documento of dadosParceiro()?.documentos">
+                      <td>
+                        <div class="documento-info">
+                          <i class="pi pi-file-pdf documento-icon"></i>
+                          <span>{{ documento.nome }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <p-tag 
+                          [value]="documento.status" 
+                          [severity]="getSeverityStatus(documento.status)">
+                        </p-tag>
+                      </td>
+                      <td>{{ documento.data_upload | date:'dd/MM/yyyy' }}</td>
+                      <td>
+                        <div class="documento-actions">
+                          <button 
+                            class="action-btn"
+                            (click)="visualizarDocumento(documento)"
+                            title="Visualizar">
+                            <i class="pi pi-eye"></i>
+                          </button>
+                          <button 
+                            class="action-btn"
+                            (click)="downloadDocumento(documento)"
+                            title="Download">
+                            <i class="pi pi-download"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+          
+        </div>
+        
+      </div>
+
+      <!-- Divisor de Seção -->
+      <div class="divisor-secao"></div>
+
+      <!-- Seção de Usuários (apenas para admin_parceiro) -->
+      <section *ngIf="isAdminParceiro" class="secao-usuarios" aria-labelledby="titulo-usuarios">
+        <div class="cabecalho-secao">
+          <h2 id="titulo-usuarios" class="titulo-secao">Gestão de Usuários</h2>
+          <p class="subtitulo-secao">Gerencie os usuários da sua empresa no sistema</p>
+        </div>
+        
+        <div class="usuarios-card">
+          <div class="usuarios-header">
+            <div class="usuarios-info">
+              <h3>Usuários Cadastrados</h3>
+              <p>{{ dadosParceiro()?.usuarios?.length || 0 }} usuários ativos</p>
+            </div>
+            <button 
+              class="btn-primary"
+              (click)="abrirModalUsuario()">
+              <i class="pi pi-plus"></i>
+              Adicionar Usuário
+            </button>
+          </div>
+          
+          <div class="usuarios-table-wrapper">
+            <table class="usuarios-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Papel</th>
+                  <th>Departamento</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let usuario of dadosParceiro()?.usuarios">
+                  <td>{{ usuario.nome }}</td>
+                  <td>{{ usuario.email }}</td>
+                  <td>
+                    <p-tag 
+                      [value]="usuario.papel" 
+                      severity="info">
+                    </p-tag>
+                  </td>
+                  <td>{{ usuario.departamento }}</td>
+                  <td>
+                    <p-tag 
+                      [value]="usuario.status" 
+                      [severity]="getSeverityStatus(usuario.status)">
+                    </p-tag>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Modal para Adicionar Usuário -->
+    <p-dialog 
+      header="Adicionar Novo Usuário" 
+      [(visible)]="showUserModal"
+      [modal]="true" 
+      [style]="{width: '450px'}"
+      [closable]="true">
+      
+      <form class="user-form">
+        <div class="form-field">
+          <label for="nome">Nome *</label>
+          <input 
+            type="text" 
+            id="nome"
+            pInputText 
+            [(ngModel)]="novoUsuario().nome"
+            name="nome"
+            placeholder="Digite o nome completo"
+            class="w-full">
+        </div>
+
+        <div class="form-field">
+          <label for="email">E-mail *</label>
+          <input 
+            type="email" 
+            id="email"
+            pInputText 
+            [(ngModel)]="novoUsuario().email"
+            name="email"
+            placeholder="Digite o e-mail"
+            class="w-full">
+        </div>
+
+        <div class="form-field">
+          <label for="senha">Senha *</label>
+          <p-password 
+            [(ngModel)]="novoUsuario().senha"
+            name="senha"
+            placeholder="Digite a senha"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="w-full">
+          </p-password>
+        </div>
+
+        <div class="form-field">
+          <label for="papel">Papel *</label>
+          <app-dropdown-moderno
+            [(ngModel)]="novoUsuario().papel"
+            [options]="opcoesRole()"
+            placeholder="Selecione o papel">
+          </app-dropdown-moderno>
+        </div>
+
+        <div class="form-field">
+          <label for="departamento">Departamento *</label>
+          <app-dropdown-moderno
+            [(ngModel)]="novoUsuario().departamento"
+            [options]="opcoesDepartamento()"
+            placeholder="Selecione o departamento">
+          </app-dropdown-moderno>
+        </div>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <div class="modal-actions">
+          <p-button 
+            label="Cancelar" 
+            icon="pi pi-times"
+            styleClass="p-button-text"
+            (onClick)="cancelarUsuario()">
+          </p-button>
+          <p-button 
+            label="Salvar" 
+            icon="pi pi-check"
+            (onClick)="salvarUsuario()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-dialog>
+
+  </div>
+</app-layout>
