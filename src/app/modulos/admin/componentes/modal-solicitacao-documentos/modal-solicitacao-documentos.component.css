@@ -1,0 +1,782 @@
+/* ========================================
+   MODAL EMAIL - DESIGN SYSTEM ESCURO
+   ======================================== */
+
+/* Container do formulário de email */
+.email-form-container {
+  padding: var(--space-6);
+  background: transparent;
+}
+
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Campos do formulário */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-field label {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.025em;
+}
+
+.form-field label.required::after {
+  content: ' *';
+  color: var(--danger);
+  font-weight: 700;
+  margin-left: var(--space-1);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  transition: all var(--transition-base);
+  backdrop-filter: blur(10px);
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--text-quaternary);
+  font-weight: 400;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: var(--bg-overlay);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  color: var(--text-primary);
+}
+
+.form-field input.p-invalid,
+.form-field textarea.p-invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: var(--font-family);
+  line-height: var(--leading-relaxed);
+}
+
+/* Mensagens de erro */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--danger);
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-1);
+  padding-left: var(--space-1);
+}
+
+.error-message i {
+  font-size: var(--font-size-xs);
+  opacity: 0.9;
+}
+
+/* Footer do modal */
+.email-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--border-secondary);
+  margin-top: var(--space-6);
+}
+
+/* Botões seguindo o design system */
+.btn-secondary,
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+  white-space: nowrap;
+  min-width: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-overlay);
+  transform: translateY(-1px);
+  border-color: rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 16px rgba(165, 40, 49, 0.3);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(165, 40, 49, 0.4);
+}
+
+.btn-primary:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-primary:disabled::before {
+  display: none;
+}
+
+/* ========================================
+   MODAL EMAIL ESPECÍFICO - PRIMENG DARK THEME
+   ======================================== */
+
+::ng-deep .email-modal {
+  /* Container do diálogo */
+  .p-dialog {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+  }
+
+  /* Header do modal */
+  .p-dialog .p-dialog-header {
+    background: var(--gradient-primary);
+    color: white;
+    border-bottom: 1px solid var(--border-secondary);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--space-6);
+  }
+
+  .p-dialog .p-dialog-header .p-dialog-title {
+    font-family: var(--font-family);
+    font-weight: 700;
+    font-size: var(--font-size-xl);
+    color: white;
+    letter-spacing: -0.025em;
+  }
+
+  .p-dialog .p-dialog-header .p-dialog-header-icon {
+    color: white;
+    opacity: 0.9;
+    transition: all var(--transition-fast);
+  }
+
+  .p-dialog .p-dialog-header .p-dialog-header-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  /* Conteúdo do modal */
+  .p-dialog .p-dialog-content {
+    padding: 0;
+    background: var(--bg-secondary);
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+    color: var(--text-primary);
+  }
+
+  /* Dropdown customizado */
+  .p-dropdown {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    min-height: 44px;
+    transition: all var(--transition-base);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Dropdown específico do email */
+  .email-dropdown.p-dropdown {
+    width: 100% !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-primary) !important;
+    border-radius: var(--radius-md) !important;
+    min-height: 44px !important;
+    transition: all var(--transition-base) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .email-dropdown .p-dropdown-label {
+    color: var(--text-primary) !important;
+    padding: var(--space-3) var(--space-4) !important;
+    font-size: var(--font-size-sm) !important;
+    font-family: var(--font-family) !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .email-dropdown .p-dropdown-trigger {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: none !important;
+    border-left: 1px solid var(--border-primary) !important;
+    color: var(--text-tertiary) !important;
+    width: 3rem !important;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+    transition: all var(--transition-base) !important;
+  }
+
+  .p-dropdown:not(.p-disabled):hover {
+    border-color: rgba(102, 126, 234, 0.4);
+    background: var(--bg-overlay);
+  }
+
+  .p-dropdown:not(.p-disabled).p-focus {
+    outline: none;
+    border-color: var(--border-focus);
+    background: var(--bg-overlay);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+
+  .p-dropdown.p-invalid {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+  }
+
+  .p-dropdown .p-dropdown-label {
+    color: var(--text-primary);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    font-weight: 400;
+  }
+
+  .p-dropdown .p-dropdown-label.p-placeholder {
+    color: var(--text-quaternary);
+  }
+
+  .p-dropdown .p-dropdown-trigger {
+    background: rgba(255, 255, 255, 0.02);
+    border: none;
+    border-left: 1px solid var(--border-primary);
+    color: var(--text-tertiary);
+    width: 3rem;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    transition: all var(--transition-base);
+  }
+
+  .p-dropdown .p-dropdown-trigger:hover {
+    color: var(--border-focus);
+    background: rgba(102, 126, 234, 0.1);
+  }
+
+  /* Inputs customizados */
+  .p-inputtext,
+  .p-inputtextarea {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    font-weight: 400;
+    transition: all var(--transition-base);
+    backdrop-filter: blur(10px);
+  }
+
+  .p-inputtext::placeholder,
+  .p-inputtextarea::placeholder {
+    color: var(--text-quaternary);
+    font-weight: 400;
+  }
+
+  .p-inputtext:enabled:focus,
+  .p-inputtextarea:enabled:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    background: var(--bg-overlay);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    color: var(--text-primary);
+  }
+
+  .p-inputtext.p-invalid,
+  .p-inputtextarea.p-invalid {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+  }
+
+  .p-inputtext:disabled,
+  .p-inputtextarea:disabled {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-quaternary);
+    cursor: not-allowed;
+  }
+
+  /* Classe de largura total */
+  .w-full {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   DROPDOWN PANEL DARK THEME
+   ======================================== */
+
+::ng-deep .p-dropdown-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(20px);
+  margin-top: 4px;
+  z-index: 9999 !important;
+}
+
+/* Força z-index alto para dropdowns dentro de modais */
+::ng-deep .email-modal .p-dropdown-panel {
+  z-index: 10000 !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-xl) !important;
+  backdrop-filter: blur(20px) !important;
+  min-width: 100% !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+/* Garantir que o overlay do modal não interfira com dropdowns */
+::ng-deep .p-dialog-mask {
+  z-index: 8000 !important;
+}
+
+::ng-deep .email-modal .p-dialog {
+  z-index: 8001 !important;
+}
+
+/* Força z-index específico para o campo destinatário */
+::ng-deep .email-modal #destinatario_panel {
+  z-index: 10001 !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel[aria-labelledby="destinatario"] {
+  z-index: 10001 !important;
+}
+
+/* Estilo adicional para garantir que o dropdown fique visível */
+::ng-deep .email-modal .p-dropdown {
+  position: relative;
+  z-index: 1;
+}
+
+::ng-deep .email-modal .p-dropdown.p-dropdown-open {
+  z-index: 1000;
+}
+
+/* Corrigir styling específico dos itens do dropdown do modal de email */
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-items {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  padding: var(--space-2) !important;
+}
+
+/* Dropdown anexado ao body - garantir largura e posicionamento corretos */
+::ng-deep body > .p-dropdown-panel {
+  min-width: 400px !important;
+  max-width: 500px !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-xl) !important;
+  backdrop-filter: blur(20px) !important;
+  z-index: 10000 !important;
+}
+
+/* Para dropdowns do email especificamente */
+::ng-deep body > .p-dropdown-panel[data-pc-section="panel"] {
+  min-width: 400px !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(20px) !important;
+  z-index: 10000 !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-items {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  padding: var(--space-2) !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-item {
+  color: var(--text-secondary) !important;
+  background: transparent !important;
+  padding: var(--space-3) var(--space-4) !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: var(--font-size-sm) !important;
+  font-family: var(--font-family) !important;
+  transition: all var(--transition-fast) !important;
+  margin-bottom: var(--space-1) !important;
+  line-height: 1.4 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-item:hover {
+  background: rgba(102, 126, 234, 0.15) !important;
+  color: var(--text-primary) !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-item.p-highlight {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-item {
+  color: var(--text-secondary) !important;
+  background: transparent !important;
+  padding: var(--space-3) var(--space-4) !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: var(--font-size-sm) !important;
+  font-family: var(--font-family) !important;
+  transition: all var(--transition-fast) !important;
+  margin-bottom: var(--space-1) !important;
+  line-height: 1.4 !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-item:hover {
+  background: rgba(102, 126, 234, 0.15) !important;
+  color: var(--text-primary) !important;
+  transform: none !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-item.p-highlight {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+}
+
+/* Corrigir filtro do dropdown se estiver ativo */
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter-container {
+  padding: var(--space-2) !important;
+  border-bottom: 1px solid var(--border-secondary) !important;
+  margin-bottom: var(--space-2) !important;
+  background: var(--bg-secondary) !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--text-primary) !important;
+  padding: var(--space-2) var(--space-3) !important;
+  font-size: var(--font-size-sm) !important;
+  width: 100% !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter::placeholder {
+  color: var(--text-quaternary) !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter:focus {
+  outline: none !important;
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+  background: var(--bg-overlay) !important;
+}
+
+/* Estilos adicionais para garantir que o filtro do dropdown tenha o fundo correto */
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container {
+  background: var(--bg-secondary) !important;
+  padding: var(--space-2) !important;
+  border-bottom: 1px solid var(--border-secondary) !important;
+  margin-bottom: var(--space-2) !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--text-primary) !important;
+  padding: var(--space-2) var(--space-3) !important;
+  font-size: var(--font-size-sm) !important;
+  width: 100% !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter::placeholder {
+  color: var(--text-quaternary) !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter:focus {
+  outline: none !important;
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+  background: var(--bg-overlay) !important;
+}
+
+::ng-deep .p-dropdown-items {
+  padding: var(--space-2);
+}
+
+::ng-deep .p-dropdown-item {
+  color: var(--text-secondary);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  transition: all var(--transition-fast);
+  margin-bottom: var(--space-1);
+}
+
+::ng-deep .p-dropdown-item:last-child {
+  margin-bottom: 0;
+}
+
+::ng-deep .p-dropdown-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--text-primary);
+}
+
+::ng-deep .p-dropdown-item.p-highlight {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+/* ========================================
+   RESPONSIVIDADE PARA MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+  ::ng-deep .email-modal .p-dialog {
+    width: 95vw !important;
+    margin: var(--space-2) !important;
+    max-height: 90vh !important;
+  }
+  
+  .email-form-container {
+    padding: var(--space-4);
+  }
+  
+  .email-footer {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .btn-secondary,
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-field label {
+    font-size: var(--font-size-sm);
+  }
+
+  .form-field input,
+  .form-field textarea {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  ::ng-deep .email-modal .p-dialog {
+    width: 98vw !important;
+    margin: var(--space-1) !important;
+  }
+
+  .email-form-container {
+    padding: var(--space-3);
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* ========================================
+   FORÇA ADICIONAL PARA GARANTIR TEMA ESCURO
+   ======================================== */
+
+::ng-deep .email-modal .p-dropdown.p-invalid,
+::ng-deep .email-modal .p-inputtext.p-invalid,
+::ng-deep .email-modal .p-inputtextarea.p-invalid {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+::ng-deep .email-modal .p-dropdown:not(.p-disabled).p-focus,
+::ng-deep .email-modal .p-inputtext:enabled:focus,
+::ng-deep .email-modal .p-inputtextarea:enabled:focus {
+  border-color: var(--border-focus) !important;
+  background: var(--bg-overlay) !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Garantir que o fundo do modal nunca seja branco */
+::ng-deep .email-modal .p-dialog,
+::ng-deep .email-modal .p-dialog .p-dialog-content,
+::ng-deep .email-modal .p-dialog .p-dialog-footer {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Remover qualquer fundo branco residual */
+::ng-deep .email-modal * {
+  background-color: transparent;
+}
+
+::ng-deep .email-modal .p-dialog {
+  background: var(--bg-secondary) !important;
+}
+
+/* Forçar background correto para TODOS os elementos de filtro */
+::ng-deep .p-dropdown-filter-container,
+::ng-deep .email-modal .p-dropdown-filter-container,
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container {
+  background: var(--bg-secondary) !important;
+}
+
+::ng-deep .p-dropdown-filter,
+::ng-deep .email-modal .p-dropdown-filter,
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter {
+  background: var(--bg-surface) !important;
+}
+
+/* Prevenir background branco em qualquer input dentro do dropdown */
+::ng-deep .p-dropdown-panel input,
+::ng-deep .email-modal .p-dropdown-panel input,
+::ng-deep body > .p-dropdown-panel input {
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+}
+
+::ng-deep .p-dropdown-panel input:focus,
+::ng-deep .email-modal .p-dropdown-panel input:focus,
+::ng-deep body > .p-dropdown-panel input:focus {
+  background: var(--bg-overlay) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ULTRA-ESPECÍFICO: Eliminar QUALQUER background branco */
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter-container * {
+  background: transparent !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter-container {
+  background: var(--bg-secondary) !important;
+}
+
+::ng-deep .email-modal .p-dropdown-panel .p-dropdown-filter-container .p-dropdown-filter {
+  background: var(--bg-surface) !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container * {
+  background: transparent !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container {
+  background: var(--bg-secondary) !important;
+}
+
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container .p-dropdown-filter {
+  background: var(--bg-surface) !important;
+}
+
+/* Força específica para o input de busca/filtro */
+::ng-deep .email-modal input[type="text"]:not(.p-inputtext),
+::ng-deep .email-modal .p-dropdown-filter-container input,
+::ng-deep body > .p-dropdown-panel input[type="text"]:not(.p-inputtext),
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container input {
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Força para quando o input de busca tem foco */
+::ng-deep .email-modal input[type="text"]:not(.p-inputtext):focus,
+::ng-deep .email-modal .p-dropdown-filter-container input:focus,
+::ng-deep body > .p-dropdown-panel input[type="text"]:not(.p-inputtext):focus,
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container input:focus {
+  background: var(--bg-overlay) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ========================================
+   REGRA FINAL: ELIMINAR QUALQUER BACKGROUND BRANCO
+   ======================================== */
+::ng-deep .email-modal *:not(.p-inputtext):not(.p-inputtextarea):not(.p-dropdown-label),
+::ng-deep body > .p-dropdown-panel *:not(.p-inputtext):not(.p-inputtextarea):not(.p-dropdown-label) {
+  background-color: transparent !important;
+}
+
+::ng-deep .email-modal .p-dropdown-filter,
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter {
+  background-color: var(--bg-surface) !important;
+}
+
+::ng-deep .email-modal .p-dropdown-filter-container,
+::ng-deep body > .p-dropdown-panel .p-dropdown-filter-container {
+  background-color: var(--bg-secondary) !important;
+}
