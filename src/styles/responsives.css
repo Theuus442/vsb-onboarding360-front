@@ -1,0 +1,42 @@
+@media (max-width: 1024px) {
+    .main-content {
+        padding: var(--spacing-lg);
+    }
+    .page-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 var(--spacing-md);
+    }
+    .navigation-menu {
+        display: none;
+    }
+    .header-actions {
+        gap: var(--spacing-sm);
+    }
+    .main-content {
+        padding: var(--spacing-md);
+    }
+    .page-title {
+        font-size: 24px;
+    }
+    .card-title {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: var(--spacing-md);
+    }
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+}
