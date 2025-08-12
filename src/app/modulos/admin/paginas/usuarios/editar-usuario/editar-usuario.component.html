@@ -1,0 +1,381 @@
+<app-layout>
+  <div class="user-edit-page">
+    <!-- Enhanced Background with Particles -->
+    <div class="page-background">
+      <div class="animated-particles">
+        @for (particle of particles; track $index) {
+          <div class="particle" 
+               [style.animation-delay]="$index * 0.3 + 's'"
+               [style.animation-duration]="(4 + $index % 3) + 's'"></div>
+        }
+      </div>
+      
+      <!-- Gradient Orbs -->
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Loading State -->
+    @if (carregando()) {
+      <div class="loading-container">
+        <div class="loading-card">
+          <app-carregando
+            mensagem="Carregando dados do usuário..."
+            [tamanho]="50">
+          </app-carregando>
+        </div>
+      </div>
+    } @else {
+      <!-- Breadcrumb Navigation -->
+      <div class="breadcrumb-section">
+        <div class="breadcrumb-container">
+          <nav class="breadcrumb-nav">
+            <button class="breadcrumb-button" (click)="voltarParaLista()" aria-label="Voltar">
+              <i class="pi pi-chevron-left"></i>
+            </button>
+            <div class="breadcrumb-path">
+              <span class="breadcrumb-item">Usuários</span>
+              <i class="pi pi-angle-right"></i>
+              <span class="breadcrumb-item current">Editar</span>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-container">
+          <div class="hero-content">
+            <div class="hero-badge">
+              <i class="pi pi-user-edit"></i>
+              <span>Editar Usuário</span>
+            </div>
+            
+            <h1 class="hero-title">
+              <span class="title-gradient">Editar Informações</span>
+            </h1>
+            
+            <p class="hero-description">
+              @if (usuario(); as user) {
+                Editando dados de <strong>{{ user.nome }}</strong>
+              } @else {
+                Modifique as informações do usuário conforme necessário
+              }
+            </p>
+            
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+              <div class="step active">
+                <div class="step-circle">
+                  <i class="pi pi-user"></i>
+                </div>
+                <span class="step-label">Dados Pessoais</span>
+              </div>
+              <div class="step-line active"></div>
+              <div class="step" [class.active]="isPersonalDataValid()">
+                <div class="step-circle">
+                  <i class="pi pi-briefcase"></i>
+                </div>
+                <span class="step-label">Dados Profissionais</span>
+              </div>
+              <div class="step-line" [class.active]="formUsuario.valid"></div>
+              <div class="step" [class.active]="formUsuario.valid">
+                <div class="step-circle">
+                  <i class="pi pi-check" *ngIf="formUsuario.valid; else stepIcon"></i>
+                  <ng-template #stepIcon>
+                    <i class="pi pi-save"></i>
+                  </ng-template>
+                </div>
+                <span class="step-label">Finalizar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Form Section -->
+      <div class="form-section">
+        <div class="form-container">
+          <form [formGroup]="formUsuario" (ngSubmit)="onSubmit()" class="enhanced-form">
+            
+            <!-- Form Header -->
+            <div class="form-header">
+              <div class="form-status">
+                <div class="status-indicator" [class.complete]="formUsuario.valid">
+                  <div class="status-dot"></div>
+                  <span class="status-text">
+                    {{ formUsuario.valid ? 'Formulário Completo' : 'Preencha os campos' }}
+                  </span>
+                </div>
+                
+                <div class="form-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="getFormProgress()"></div>
+                  </div>
+                  <span class="progress-text">{{ getFormProgress() }}% completo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Form Content -->
+            <div class="form-body">
+              
+              <!-- Personal Information Card -->
+              <div class="info-card personal-info">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <i class="pi pi-user"></i>
+                  </div>
+                  <div class="card-title">
+                    <h3>Informações Pessoais</h3>
+                    <p>Dados básicos de identificação</p>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="fields-grid">
+                    
+                    <!-- Nome Completo -->
+                    <div class="field-container full-width">
+                      <div class="field-wrapper" [class.filled]="formUsuario.get('nome')?.value">
+                        <label for="nome" class="floating-label">
+                          <i class="pi pi-user"></i>
+                          Nome Completo
+                        </label>
+                        <input
+                          id="nome"
+                          type="text"
+                          pInputText
+                          formControlName="nome"
+                          placeholder=" "
+                          [class.error]="isCampoInvalido('nome')"
+                          [class.success]="isCampoValido('nome')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('nome')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('nome')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('nome')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('nome') }}
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Email -->
+                    <div class="field-container">
+                      <div class="field-wrapper" [class.filled]="formUsuario.get('email')?.value">
+                        <label for="email" class="floating-label">
+                          <i class="pi pi-envelope"></i>
+                          E-mail Profissional
+                        </label>
+                        <input
+                          id="email"
+                          type="email"
+                          pInputText
+                          formControlName="email"
+                          placeholder=" "
+                          (blur)="validateEmail()"
+                          [class.error]="isCampoInvalido('email')"
+                          [class.success]="isCampoValido('email')"
+                          class="enhanced-input" />
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('email')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('email')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('email')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('email') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Professional Information Card -->
+              <div class="info-card professional-info">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <i class="pi pi-briefcase"></i>
+                  </div>
+                  <div class="card-title">
+                    <h3>Informações Profissionais</h3>
+                    <p>Configurações de cargo e acesso</p>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="fields-grid">
+                    
+                    <!-- Papel -->
+                    <div class="field-container">
+                      <div class="field-wrapper dropdown-wrapper" [class.filled]="formUsuario.get('papel')?.value">
+                        <label for="papel" class="floating-label">
+                          <i class="pi pi-shield"></i>
+                          Papel no Sistema
+                        </label>
+                        
+                        <app-dropdown-moderno
+                          [options]="opcoesPapel"
+                          placeholder="Selecione o papel no sistema"
+                          [hasError]="isCampoInvalido('papel')"
+                          [hasSuccess]="isCampoValido('papel')"
+                          formControlName="papel"
+                          ariaLabel="Papel no sistema"
+                          [showFooter]="true">
+                        </app-dropdown-moderno>
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('papel')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('papel')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('papel')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('papel') }}
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Departamento -->
+                    <div class="field-container">
+                      <div class="field-wrapper dropdown-wrapper" [class.filled]="formUsuario.get('departamento')?.value">
+                        <label for="departamento" class="floating-label">
+                          <i class="pi pi-building"></i>
+                          Departamento
+                        </label>
+                        
+                        <app-dropdown-moderno
+                          [options]="opcoesDepartamento"
+                          placeholder="Selecione o departamento"
+                          [hasError]="isCampoInvalido('departamento')"
+                          [hasSuccess]="isCampoValido('departamento')"
+                          [clearable]="true"
+                          [searchable]="false"
+                          formControlName="departamento"
+                          ariaLabel="Departamento"
+                          [showFooter]="false">
+                        </app-dropdown-moderno>
+                        
+                        <div class="field-icons">
+                          @if (isCampoValido('departamento')) {
+                            <i class="pi pi-check success-icon"></i>
+                          } @else if (isCampoInvalido('departamento')) {
+                            <i class="pi pi-times error-icon"></i>
+                          }
+                        </div>
+                        
+                        <div class="input-border"></div>
+                      </div>
+                      
+                      @if (isCampoInvalido('departamento')) {
+                        <div class="field-error">
+                          <i class="pi pi-exclamation-triangle"></i>
+                          {{ getMensagemErro('departamento') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Form Actions -->
+            <div class="form-actions">
+              <div class="actions-container">
+                
+                <!-- Save Draft Button -->
+                <button
+                  type="button"
+                  class="action-btn draft-btn"
+                  (click)="salvarRascunho()"
+                  [disabled]="salvando() || !hasFormData()"
+                  *ngIf="!formUsuario.pristine">
+                  <i class="pi pi-file"></i>
+                  <span>Salvar Rascunho</span>
+                </button>
+                
+                <!-- Cancel Button -->
+                <button
+                  type="button"
+                  class="action-btn cancel-btn"
+                  (click)="voltarParaLista()"
+                  [disabled]="salvando()">
+                  <i class="pi pi-times"></i>
+                  <span>Cancelar</span>
+                </button>
+                
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="action-btn submit-btn"
+                  [disabled]="!podeSalvar()"
+                  [class.loading]="salvando()">
+                  
+                  <div class="btn-content">
+                    @if (salvando()) {
+                      <div class="loading-spinner">
+                        <i class="pi pi-spinner pi-spin"></i>
+                      </div>
+                      <span>Salvando...</span>
+                    } @else {
+                      <i class="pi pi-save"></i>
+                      <span>Salvar Alterações</span>
+                    }
+                  </div>
+                  
+                  <div class="btn-ripple"></div>
+                </button>
+              </div>
+              
+              <!-- Form Summary -->
+              <div class="form-summary" *ngIf="formUsuario.dirty">
+                <div class="summary-item">
+                  <span class="summary-label">Campos preenchidos:</span>
+                  <span class="summary-value">{{ getFilledFieldsCount() }}/{{ getTotalFieldsCount() }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Status:</span>
+                  <span class="summary-value" [class.success]="formUsuario.valid" [class.error]="!formUsuario.valid">
+                    {{ formUsuario.valid ? 'Pronto para salvar' : 'Há campos inválidos' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Enhanced Toast -->
+  <p-toast position="top-right" [style]="{marginTop: '80px'}"></p-toast>
+</app-layout>
