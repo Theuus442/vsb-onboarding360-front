@@ -1,16 +1,14 @@
-// Interfaces para o painel administrativo
 
 export interface Estatistica {
   id: string;
   titulo: string;
   valor: number | string;
   icone: string;
-  icon?: string; // Alias for compatibility
   cor: string;
   tipo?: 'crescimento' | 'decrescimento' | 'neutro';
   tendencia?: 'up' | 'down' | 'stable';
   percentual_mudanca?: number;
-  porcentagem?: number; // Alias for percentual_mudanca
+  porcentagem?: number;
   descricao?: string;
   formato?: 'numero' | 'porcentagem' | 'moeda' | 'texto';
 }
@@ -21,10 +19,10 @@ export interface AtividadeRecente {
   titulo?: string;
   descricao: string;
   data?: string;
-  timestamp?: string; // Compatibilidade com formato da API
+  timestamp?: string; 
   usuario?: string;
   icone?: string;
-  icon?: string; // Compatibilidade com formato da API
+  icon?: string; 
   cor: string;
   link?: string;
 }
@@ -62,7 +60,6 @@ export interface AcessoRapido {
   ativo: boolean;
 }
 
-// Interfaces para resumos e métricas
 export interface ResumoGeral {
   total_parceiros: number;
   total_usuarios: number;

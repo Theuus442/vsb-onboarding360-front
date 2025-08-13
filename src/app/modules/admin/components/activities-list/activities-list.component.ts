@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AtividadeRecente } from '../../../../shared/models';
+import { getIconClass } from '../../../../compartilhado/utilitarios/icon.util';
 
 @Component({
   selector: 'app-activities-list',
@@ -30,7 +31,7 @@ import { AtividadeRecente } from '../../../../shared/models';
               <div class="activity-item" [style.animation-delay.ms]="index * 100">
                 <div class="activity-indicator">
                   <div class="activity-icon" [class]="getActivityTypeClass(atividade.icon)">
-                    <i [class]="'pi pi-' + atividade.icon"></i>
+                    <i [class]="getIconClass(atividade.icon)"></i>
                   </div>
                   @if (index < activities.length - 1) {
                     <div class="activity-line"></div>
@@ -374,4 +375,6 @@ export class ActivitiesListComponent {
     };
     return typeMap[icone] || 'system-action';
   }
+
+  getIconClass = getIconClass;
 }

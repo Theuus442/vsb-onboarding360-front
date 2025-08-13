@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Estatistica } from '../../../../compartilhado/modelos';
+import { getIconClass } from '../../../../compartilhado/utilitarios/icon.util';
 
 @Component({
   selector: 'app-grade-estatisticas',
@@ -16,7 +17,7 @@ import { Estatistica } from '../../../../compartilhado/modelos';
                 <h3 class="stat-label">{{ estatistica.titulo }}</h3>
               </div>
               <div class="stat-icon">
-                <i [class]="'pi pi-' + (estatistica.icon || estatistica.icone)"></i>
+                <i [class]="getIconClass(estatistica.icon || estatistica.icone)"></i>
               </div>
             </div>
             
@@ -213,4 +214,6 @@ export class GradeEstatisticasComponent {
     };
     return iconMap[tipo as keyof typeof iconMap] || 'pi-minus';
   }
+
+  getIconClass = getIconClass;
 }

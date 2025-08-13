@@ -15,6 +15,7 @@
                 <i class="pi pi-circle-fill" [style.color]="refreshing() ? '#f59e0b' : '#22c55e'"></i>
                 Atualizado {{ getLastUpdateFormatted() }}
               </span>
+              <!-- Botão de debug temporário (apenas desenvolvimento) -->
             </p>
           </div>
         </div>
@@ -24,7 +25,7 @@
             <article class="stat-card" [ngClass]="getStatCardClass(stat.tipo || 'neutro')"
                      [attr.aria-label]="stat.titulo + ': ' + stat.valor">
               <div class="stat-icon" aria-hidden="true">
-                <i [class]="stat.icone"></i>
+                <i [class]="getIconClass(stat.icone || stat.icon)"></i>
               </div>
               <div class="stat-content">
                 <div class="stat-value" [attr.aria-label]="'Valor: ' + stat.valor">{{ stat.valor }}</div>
@@ -42,6 +43,7 @@
         </div>
       </div>
     </section>
+
 
     <!-- API Status Section -->
     @if (!apiConnected()) {
@@ -85,13 +87,8 @@
                   <div class="activity-item" [style.animation-delay]="(i * 100) + 'ms'">
                     <div class="activity-icon" [style.background-color]="atividade.cor">
                       <!-- Ícone dinâmico da API com fallback limpo -->
-                      @if (atividade.icon || atividade.icone) {
-                        <i [class]="atividade.icon || atividade.icone"
-                           [title]="atividade.titulo || atividade.tipo"></i>
-                      } @else {
-                        <i class="pi pi-info-circle"
-                           [title]="atividade.titulo || atividade.tipo"></i>
-                      }
+                      <i [class]="getIconClass(atividade.icon || atividade.icone)"
+                         [title]="atividade.titulo || atividade.tipo"></i>
                     </div>
                     <div class="activity-content">
                       <h4 class="activity-title">{{ atividade.titulo || atividade.tipo }}</h4>

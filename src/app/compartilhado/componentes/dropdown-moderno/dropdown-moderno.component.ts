@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { getIconClass } from '../../utilitarios/icon.util';
 
 export interface DropdownOption {
   label: string;
@@ -49,7 +50,7 @@ export interface DropdownOption {
         
         <div class="dropdown-value">
           <ng-container *ngIf="selectedOption; else placeholderTemplate">
-            <i *ngIf="selectedOption.icon" class="pi pi-{{ selectedOption.icon }} option-icon"></i>
+            <i *ngIf="selectedOption.icon" [class]="getIconClass(selectedOption.icon)" class="option-icon"></i>
             <span class="selected-text">{{ selectedOption.label }}</span>
           </ng-container>
           <ng-template #placeholderTemplate>
@@ -103,8 +104,9 @@ export interface DropdownOption {
               (click)="selectOption(option)"
               (mouseenter)="highlightedIndex = i">
               
-              <i *ngIf="option.icon" 
-                 class="pi pi-{{ option.icon }} option-icon" 
+              <i *ngIf="option.icon"
+                 [class]="getIconClass(option.icon)"
+                 class="option-icon"
                  [style.color]="option.color"></i>
               
               <div class="option-content">
@@ -619,6 +621,8 @@ export class DropdownModernoComponent implements ControlValueAccessor, OnInit, O
   trackByValue(index: number, option: DropdownOption): any {
     return option.value;
   }
+
+  getIconClass = getIconClass;
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event): void {

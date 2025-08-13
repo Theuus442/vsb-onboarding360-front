@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AcessoRapido } from '../../../../shared/models';
+import { getIconClass } from '../../../../compartilhado/utilitarios/icon.util';
 
 @Component({
   selector: 'app-quick-access',
@@ -14,7 +15,7 @@ import { AcessoRapido } from '../../../../shared/models';
           [style.animation-delay.ms]="index * 100"
           (click)="itemClick.emit(item)">
           <div class="access-icon" [style.background]="item.cor">
-            <i [class]="'pi pi-' + item.icon"></i>
+            <i [class]="getIconClass(item.icon)"></i>
           </div>
           <div class="access-content">
             <h3 class="access-title">{{ item.titulo }}</h3>
@@ -163,4 +164,6 @@ import { AcessoRapido } from '../../../../shared/models';
 export class QuickAccessComponent {
   @Input() quickAccessItems: AcessoRapido[] = [];
   @Output() itemClick = new EventEmitter<AcessoRapido>();
+
+  getIconClass = getIconClass;
 }

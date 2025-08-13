@@ -19,6 +19,7 @@ import {
   StatusIntegracao,
   AcessoRapido
 } from '../../../../compartilhado/modelos';
+import { getIconClass } from '../../../../compartilhado/utilitarios/icon.util';
 import { PainelService, ErrorHandlingService, ApiHealthService, AutenticacaoService, DateUtilsService } from '../../../../compartilhado/servicos';
 import { environment } from '../../../../../environments/environment';
 
@@ -42,6 +43,7 @@ export class PainelAdminComponent implements OnInit {
   private readonly apiHealth = inject(ApiHealthService);
   private readonly authService = inject(AutenticacaoService);
   private readonly dateUtils = inject(DateUtilsService);
+
 
   // Signals para estado reativo
   protected readonly estatisticas = signal<Estatistica[]>([]);
@@ -428,4 +430,10 @@ export class PainelAdminComponent implements OnInit {
   getLastUpdateFormatted(): string {
     return this.formatRelativeTime(this.lastUpdate().toISOString());
   }
+
+  /**
+   * Get correct icon class for PrimeNG
+   */
+  getIconClass = getIconClass;
+
 }

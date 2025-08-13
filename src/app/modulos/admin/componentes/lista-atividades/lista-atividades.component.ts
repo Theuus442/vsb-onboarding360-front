@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AtividadeRecente } from '../../../../compartilhado/modelos';
+import { getIconClass } from '../../../../compartilhado/utilitarios/icon.util';
 
 @Component({
   selector: 'app-lista-atividades',
@@ -16,7 +17,7 @@ import { AtividadeRecente } from '../../../../compartilhado/modelos';
           class="item-atividade"
         >
           <div class="icone-atividade" [style.backgroundColor]="atividade.cor">
-            <i [class]="atividade.icone"></i>
+            <i [class]="getIconClass(atividade.icone)"></i>
           </div>
           
           <div class="conteudo-atividade">
@@ -131,4 +132,6 @@ export class ListaAtividadesComponent {
       return dataAtividade.toLocaleDateString('pt-BR');
     }
   }
+
+  getIconClass = getIconClass;
 }
