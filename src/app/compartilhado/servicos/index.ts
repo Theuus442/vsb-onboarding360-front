@@ -10,3 +10,5 @@ export * from './parceiro-dashboard.service';
 export * from './error-handling.service';
 export * from './api-health.service';
 export * from './email-notification.service';
+export * from './date-utils.service';
+export * from './notification.service';

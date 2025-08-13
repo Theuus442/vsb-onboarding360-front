@@ -19,7 +19,7 @@ import {
   StatusIntegracao,
   AcessoRapido
 } from '../../../../compartilhado/modelos';
-import { PainelService, ErrorHandlingService, ApiHealthService, AutenticacaoService } from '../../../../compartilhado/servicos';
+import { PainelService, ErrorHandlingService, ApiHealthService, AutenticacaoService, DateUtilsService } from '../../../../compartilhado/servicos';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
@@ -41,6 +41,7 @@ export class PainelAdminComponent implements OnInit {
   private readonly errorHandler = inject(ErrorHandlingService);
   private readonly apiHealth = inject(ApiHealthService);
   private readonly authService = inject(AutenticacaoService);
+  private readonly dateUtils = inject(DateUtilsService);
 
   // Signals para estado reativo
   protected readonly estatisticas = signal<Estatistica[]>([]);
@@ -86,11 +87,56 @@ export class PainelAdminComponent implements OnInit {
     // Carregar atividades recentes
     this.painelService.getAtividadesRecentes().subscribe({
       next: (data) => {
-        this.atividadesRecentes.set(data);
+        console.log('📊 Dados de atividades recebidos:', data);
+
+        // Verificar se data é um array
+        const atividades = Array.isArray(data) ? data : [];
+
+        // Normalizar dados das atividades para garantir compatibilidade
+        const atividadesNormalizadas = atividades.map((atividade: any, index: number) => {
+          console.log(`🔄 Processando atividade ${index}:`, atividade);
+
+          // Mapear ícones que não existem no PrimeNG para ícones válidos
+          const iconeApi = atividade.icon || atividade.icone || 'pi pi-info-circle';
+          const iconeValido = this.mapearIconeParaValido(iconeApi);
+
+          console.log(`🎨 Ícone para atividade ${index} (${atividade.tipo}):`, {
+            api: iconeApi,
+            valido: iconeValido,
+            mapeado: iconeApi !== iconeValido,
+            tipo: atividade.tipo
+          });
+
+          const normalizada = {
+            // IDs e campos básicos
+            id: atividade.id || index,
+            descricao: atividade.descricao || 'Atividade sem descrição',
+            usuario: atividade.usuario || 'Usuário desconhecido',
+            cor: atividade.cor || '#6b7280',
+
+            // Usar ícones válidos mapeados
+            icon: iconeValido,
+            icone: iconeValido,
+
+            // Normalizar timestamps
+            timestamp: atividade.timestamp || atividade.data,
+            data: atividade.timestamp || atividade.data,
+
+            // Normalizar título
+            titulo: atividade.titulo || this.getTitleFromType(atividade.tipo) || atividade.tipo || 'Atividade',
+            tipo: atividade.tipo || 'sistema'
+          };
+
+          console.log(`✅ Atividade ${index} normalizada:`, normalizada);
+          return normalizada;
+        });
+
+        console.log('🎯 Total de atividades normalizadas:', atividadesNormalizadas.length);
+        this.atividadesRecentes.set(atividadesNormalizadas);
       },
       error: (error) => {
         this.handleApiError(error);
-        console.error('Erro ao carregar atividades:', error);
+        console.error('❌ Erro ao carregar atividades:', error);
       }
     });
 
@@ -244,23 +290,27 @@ export class PainelAdminComponent implements OnInit {
   }
 
   /**
-   * Format relative time
+   * Format relative time - usando DateUtilsService para robustez
    */
   formatRelativeTime(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    if (!dateString) return 'Data inválida';
 
-    if (diffInMinutes < 1) return 'Agora';
-    if (diffInMinutes < 60) return `${diffInMinutes}m atrás`;
+    try {
+      // Converter formato MySQL (YYYY-MM-DD HH:mm:ss) para ISO se necessário
+      let isoString = dateString;
 
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h atrás`;
+      if (!dateString.includes('T') && dateString.includes(' ')) {
+        // Formato MySQL: "2025-08-12 11:41:55"
+        // Converter para ISO: "2025-08-12T11:41:55"
+        isoString = dateString.replace(' ', 'T');
+      }
 
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d atrás`;
-
-    return date.toLocaleDateString('pt-BR');
+      // Usar DateUtilsService para formatação robusta
+      return this.dateUtils.formatToRelativeTime(isoString);
+    } catch (error) {
+      console.warn('Erro ao formatar data:', dateString, error);
+      return 'Data inválida';
+    }
   }
 
   /**
@@ -291,6 +341,86 @@ export class PainelAdminComponent implements OnInit {
    * Math object for template access
    */
   readonly Math = Math;
+
+  /**
+   * Mapear ícones para válidos do PrimeNG
+   */
+  private mapearIconeParaValido(iconeOriginal: string): string {
+    return this.mapearIcone(iconeOriginal);
+  }
+
+  /**
+   * Mapeamento de ícones para garantir compatibilidade com PrimeNG
+   */
+  private mapearIcone(iconeOriginal: string): string {
+    // Ícones que definitivamente existem no PrimeNG
+    const iconeMap: Record<string, string> = {
+      'pi pi-user-times': 'pi pi-times',       // Mudar para times simples
+      'pi pi-user-plus': 'pi pi-plus',         // Mudar para plus simples
+      'pi pi-user-minus': 'pi pi-minus',       // Mudar para minus simples
+      'pi pi-user': 'pi pi-user',              // Manter
+      'pi pi-file': 'pi pi-file',              // Manter
+      'pi pi-check': 'pi pi-check',            // Manter
+      'pi pi-times': 'pi pi-times',            // Manter
+      'pi pi-plus': 'pi pi-plus',              // Manter
+      'pi pi-minus': 'pi pi-minus',            // Manter
+      'pi pi-trash': 'pi pi-trash',            // Manter
+      'pi pi-delete': 'pi pi-trash',           // Mapear para trash
+    };
+
+    const iconeMapeado = iconeMap[iconeOriginal] || iconeOriginal || 'pi pi-info-circle';
+
+    console.log(`🔧 Mapeamento de ícone:`, {
+      original: iconeOriginal,
+      mapeado: iconeMapeado,
+      foiMapeado: iconeMapeado !== iconeOriginal
+    });
+
+    return iconeMapeado;
+  }
+
+  /**
+   * Obter título baseado no tipo da atividade
+   */
+  private getTitleFromType(tipo: string): string {
+    const titleMap: Record<string, string> = {
+      'criação': 'Criação',
+      'remoção': 'Remoção',
+      'edição': 'Edição',
+      'aprovação': 'Aprovação',
+      'rejeição': 'Rejeição',
+      'upload': 'Upload',
+      'download': 'Download',
+      'login': 'Login',
+      'logout': 'Logout'
+    };
+    return titleMap[tipo] || tipo;
+  }
+
+  /**
+   * Obter ícone correto da atividade com debug
+   */
+  protected getActivityIcon(atividade: any): string {
+    const icon = atividade.icon || atividade.icone;
+    console.log(`🔍 Debug ícone para ${atividade.tipo}:`, {
+      icon: atividade.icon,
+      icone: atividade.icone,
+      final: icon
+    });
+
+    if (!icon) {
+      console.warn('⚠️ Ícone não encontrado para atividade:', atividade);
+      return 'pi pi-info-circle'; // Ícone padrão
+    }
+    return icon;
+  }
+
+  /**
+   * Verificar se ícone é válido
+   */
+  protected isValidIcon(iconClass: string): boolean {
+    return !!(iconClass && iconClass.includes('pi-'));
+  }
 
   /**
    * Get formatted last update time

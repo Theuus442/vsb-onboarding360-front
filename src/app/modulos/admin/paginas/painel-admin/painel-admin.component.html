@@ -84,10 +84,17 @@
                 @for (atividade of atividadesRecentes(); track atividade.id; let i = $index) {
                   <div class="activity-item" [style.animation-delay]="(i * 100) + 'ms'">
                     <div class="activity-icon" [style.background-color]="atividade.cor">
-                      <i [class]="atividade.icone"></i>
+                      <!-- Ícone dinâmico da API com fallback limpo -->
+                      @if (atividade.icon || atividade.icone) {
+                        <i [class]="atividade.icon || atividade.icone"
+                           [title]="atividade.titulo || atividade.tipo"></i>
+                      } @else {
+                        <i class="pi pi-info-circle"
+                           [title]="atividade.titulo || atividade.tipo"></i>
+                      }
                     </div>
                     <div class="activity-content">
-                      <h4 class="activity-title">{{ atividade.titulo }}</h4>
+                      <h4 class="activity-title">{{ atividade.titulo || atividade.tipo }}</h4>
                       <p class="activity-description">{{ atividade.descricao }}</p>
                       <div class="activity-meta">
                         @if (atividade.usuario) {
@@ -98,7 +105,7 @@
                         }
                         <span class="activity-time">
                           <i class="pi pi-clock"></i>
-                          {{ formatRelativeTime(atividade.data) }}
+                          {{ formatRelativeTime(atividade.timestamp || atividade.data || '') }}
                         </span>
                       </div>
                     </div>
@@ -221,7 +228,7 @@
                     </div>
                     <div class="integration-last-sync">
                       <i class="pi pi-refresh"></i>
-                      <span>{{ formatRelativeTime(integration.ultima_sincronizacao) }}</span>
+                      <span>{{ formatRelativeTime(integration.ultima_sincronizacao || '') }}</span>
                     </div>
                   </div>
                 }

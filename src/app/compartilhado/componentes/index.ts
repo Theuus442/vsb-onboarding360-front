@@ -8,3 +8,8 @@ export * from './tag-status/tag-status.component';
 export * from './offline-banner/offline-banner.component';
 export * from './input-busca/input-busca.component';
 export * from './api-status/api-status.component';
+
+// Novos componentes otimizados
+export * from './loading-spinner/loading-spinner.component';
+export * from './status-badge/status-badge.component';
+export * from './pagination/pagination.component';

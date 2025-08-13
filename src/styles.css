@@ -1,21 +1,22 @@
 /* ==========================================================================
-   GLOBAL STYLES - MODERN DESIGN SYSTEM
+   GLOBAL STYLES - VSB ONBOARD360 DESIGN SYSTEM
    ========================================================================== */
 
+/* PrimeNG Icons */
 @import "primeicons/primeicons.css";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* Universal Dropdown Styles - Definitive Solution */
+/* Novos Design Tokens e Estilos Globais */
+@import "./styles/design-tokens.css";
+@import "./styles/global.css";
+
+/* Estilos específicos de componentes (legacy - manter por compatibilidade) */
 @import "./styles/dropdown-universal.css";
-
-/* Force Dropdown Top - Ultimate Solution */
 @import "./styles/dropdown-force-top.css";
-
-/* Modern Dropdown Styles - Final Fix */
 @import "./styles/dropdown-final-fix.css";
-
-/* Enhanced Dashboard Styles */
 @import "./styles/dashboard-enhancements.css";
+
+/* Novos estilos de componentes */
+@import "./styles/components/login.css";
 
 /* ==========================================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)

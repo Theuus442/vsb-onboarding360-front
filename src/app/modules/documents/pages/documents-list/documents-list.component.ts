@@ -14,9 +14,10 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 // Layout e Componentes
 import { LayoutComponent } from '../../../../shared/layout/layout.component';
 import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
-import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
-// StatusTagComponent removido - usando badges customizados
+import { LoadingSpinnerComponent } from '../../../../compartilhado/componentes/loading-spinner/loading-spinner.component';
+import { StatusBadgeComponent } from '../../../../compartilhado/componentes/status-badge/status-badge.component';
+import { PaginationComponent } from '../../../../compartilhado/componentes/pagination/pagination.component';
+import { DateFormatPipe } from '../../../../compartilhado/pipes/date-format.pipe';
 
 // Componente de Upload
 import { UploadModalComponent } from '../../components/upload-modal/upload-modal.component';
@@ -24,6 +25,7 @@ import { UploadModalComponent } from '../../components/upload-modal/upload-modal
 // Models e Services
 import { RespostaPaginada, Documento, StatusDocumento, TipoDocumento } from '../../../../shared/models';
 import { DocumentoService, ParceiroService } from '../../../../shared/services';
+import { DateUtilsService, NotificationService } from '../../../../compartilhado/servicos';
 
 // Constants
 const STATUS_DOCUMENTO_LABELS = {
@@ -72,8 +74,10 @@ interface DocumentoFilter {
     ConfirmDialogModule,
     LayoutComponent,
     SearchInputComponent,
-    LoadingComponent,
+    LoadingSpinnerComponent,
+    StatusBadgeComponent,
     PaginationComponent,
+    DateFormatPipe,
     UploadModalComponent
   ],
   providers: [MessageService, ConfirmationService],
@@ -86,6 +90,8 @@ export class DocumentsListComponent implements OnInit {
   private readonly parceiroService = inject(ParceiroService);
   private readonly servicoMensagem = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
+  protected readonly dateUtils = inject(DateUtilsService);
+  private readonly notificationService = inject(NotificationService);
 
   // Signals para estado reativo
   readonly pesquisaDocumentos = signal('');
@@ -412,7 +418,7 @@ export class DocumentsListComponent implements OnInit {
   }
 
   formatarData(data: string): string {
-    return new Date(data).toLocaleDateString('pt-BR');
+    return this.dateUtils.formatToBrazilianDate(data);
   }
 
   getFileIcon(filename: string): string {

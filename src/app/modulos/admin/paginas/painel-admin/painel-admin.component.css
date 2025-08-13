@@ -391,12 +391,25 @@
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .activity-icon i {
-  font-size: 1.1rem;
-  color: white;
+  font-size: 1.1rem !important;
+  color: white !important;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  display: inline-block;
+  line-height: 1;
+  z-index: 2;
+  position: relative;
+}
+
+/* Ícones das atividades - estilo limpo e simples */
+.activity-icon i {
+  color: white !important;
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+  display: inline-block !important;
 }
 
 .activity-content {

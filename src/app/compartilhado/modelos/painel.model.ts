@@ -16,13 +16,15 @@ export interface Estatistica {
 }
 
 export interface AtividadeRecente {
-  id: string;
-  tipo: 'documento' | 'usuario' | 'parceiro' | 'sistema';
-  titulo: string;
+  id: string | number;
+  tipo: 'documento' | 'usuario' | 'parceiro' | 'sistema' | 'criação' | 'remoção' | string;
+  titulo?: string;
   descricao: string;
-  data: string;
+  data?: string;
+  timestamp?: string; // Compatibilidade com formato da API
   usuario?: string;
-  icone: string;
+  icone?: string;
+  icon?: string; // Compatibilidade com formato da API
   cor: string;
   link?: string;
 }

@@ -21,6 +21,7 @@ import { MessageService } from 'primeng/api';
 // Services and Models
 import { AuthService } from '../../../../shared/services/auth.service';
 import { ParceiroApiService } from '../../../../shared/services/parceiro-api.service';
+import { DateUtilsService } from '../../../../compartilhado/servicos/date-utils.service';
 import {
   MeuPerfil,
   EmpresaParceiraAPI,
@@ -212,7 +213,7 @@ interface DropdownOption {
                   </div>
                   <div class="company-item">
                     <label>Data de Cadastro</label>
-                    <span>{{ formatarData(dadosDashboard()?.empresa?.created_at) }}</span>
+                    <span>{{ dateUtils.formatToBrazilianDate(dadosDashboard()?.empresa?.created_at) }}</span>
                   </div>
                 </div>
               </div>
@@ -228,7 +229,7 @@ interface DropdownOption {
                       </div>
                       <div class="activity-content">
                         <span class="activity-title">{{ doc.nome }}</span>
-                        <span class="activity-meta">{{ doc.tipo }} • {{ formatarData(doc.created_at) }}</span>
+                        <span class="activity-meta">{{ doc.tipo }} • {{ dateUtils.formatToBrazilianDate(doc.created_at) }}</span>
                       </div>
                       <p-tag [value]="doc.status" [severity]="getStatusSeverity(doc.status)"></p-tag>
                     </div>
@@ -296,7 +297,7 @@ interface DropdownOption {
                         <p-tag [value]="doc.status" [severity]="getStatusSeverity(doc.status)"></p-tag>
                       </td>
                       <td>{{ doc.setor_destino }}</td>
-                      <td>{{ formatarData(doc.created_at) }}</td>
+                      <td>{{ dateUtils.formatToBrazilianDate(doc.created_at) }}</td>
                       <td>
                         <button 
                           class="btn-action" 
@@ -375,7 +376,7 @@ interface DropdownOption {
                       <td>
                         <p-tag [value]="user.status" [severity]="getStatusSeverity(user.status)"></p-tag>
                       </td>
-                      <td>{{ formatarData(user.created_at) }}</td>
+                      <td>{{ dateUtils.formatToBrazilianDate(user.created_at) }}</td>
                       <td>
                         <button 
                           class="btn-danger" 
@@ -442,7 +443,7 @@ interface DropdownOption {
                       </div>
                       <div class="detail-item">
                         <label>Último Acesso</label>
-                        <span>{{ formatarData(dadosDashboard()?.perfil?.ultimo_acesso) }}</span>
+                        <span>{{ dateUtils.formatToBrazilianDateTime(dadosDashboard()?.perfil?.ultimo_acesso) }}</span>
                       </div>
                     </div>
                   </div>
@@ -472,7 +473,7 @@ interface DropdownOption {
                     </div>
                     <div class="detail-item">
                       <label>Data de Cadastro</label>
-                      <span>{{ formatarData(dadosDashboard()?.empresa?.created_at) }}</span>
+                      <span>{{ dateUtils.formatToBrazilianDate(dadosDashboard()?.empresa?.created_at) }}</span>
                     </div>
                   </div>
                 </div>
@@ -611,6 +612,7 @@ export class PartnerDashboardRedesignComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly parceiroApiService = inject(ParceiroApiService);
   private readonly messageService = inject(MessageService);
+  protected readonly dateUtils = inject(DateUtilsService);
 
   // Estado principal
   protected readonly dadosDashboard = signal<DashboardParceiroAPI | null>(null);
@@ -698,9 +700,7 @@ export class PartnerDashboardRedesignComponent implements OnInit {
   getDocumentosRecentes(): DocumentoAPI[] {
     const documentos = this.dadosDashboard()?.documentos;
     if (!Array.isArray(documentos)) return [];
-    return documentos
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 5);
+    return this.dateUtils.sortByTimestamp(documentos, 'created_at').slice(0, 5);
   }
 
   getInitials(nome: string | undefined | null): string {
@@ -883,19 +883,8 @@ export class PartnerDashboardRedesignComponent implements OnInit {
     }
   }
 
+  // Método mantido para compatibilidade, mas agora usa DateUtilsService
   formatarData(data: string | undefined): string {
-    if (!data) return 'N/A';
-    
-    try {
-      return new Date(data).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch {
-      return data;
-    }
+    return this.dateUtils.formatToBrazilianDateTime(data);
   }
 }
