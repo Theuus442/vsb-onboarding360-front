@@ -168,10 +168,10 @@
                   <div class="info-grid">
                     <div class="info-item full-width">
                       <span class="info-label">Status</span>
-                      <p-tag 
-                        [value]="parceiro.status" 
+                      <p-tag
+                        [value]="parceiro.status"
                         [severity]="getStatusSeverity(parceiro.status)"
-                        [icon]="getStatusIcon(parceiro)"
+                        [icon]="getStatusIconByStatus(parceiro.status)"
                         styleClass="status-tag">
                       </p-tag>
                     </div>

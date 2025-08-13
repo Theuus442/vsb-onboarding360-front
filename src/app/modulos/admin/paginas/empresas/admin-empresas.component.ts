@@ -229,7 +229,7 @@ export class AdminEmpresasComponent implements OnInit, OnDestroy {
   }
 
   getStatusIcon(parceiro: Parceiro): string {
-    return this.isParceiroAtivo(parceiro) ? 'pi-ban' : 'pi-check';
+    return this.isParceiroAtivo(parceiro) ? 'pi-times-circle' : 'pi-check-circle';
   }
 
   getStatusTooltip(parceiro: Parceiro): string {
@@ -269,10 +269,27 @@ export class AdminEmpresasComponent implements OnInit, OnDestroy {
   getStatusSeverity(status: string): SeverityType {
     const statusMap: Record<string, SeverityType> = {
       'ativa': 'success',
+      'ativo': 'success',
       'pendente': 'warning',
-      'inativa': 'danger'
+      'inativa': 'danger',
+      'inativo': 'danger',
+      'suspenso': 'warning',
+      'bloqueado': 'danger'
     };
     return statusMap[status.toLowerCase()] || 'info';
+  }
+
+  getStatusIconByStatus(status: string): string {
+    const iconMap: Record<string, string> = {
+      'ativa': 'pi-check-circle',
+      'ativo': 'pi-check-circle',
+      'pendente': 'pi-clock',
+      'inativa': 'pi-times-circle',
+      'inativo': 'pi-times-circle',
+      'suspenso': 'pi-pause-circle',
+      'bloqueado': 'pi-ban'
+    };
+    return iconMap[status.toLowerCase()] || 'pi-info-circle';
   }
 
 

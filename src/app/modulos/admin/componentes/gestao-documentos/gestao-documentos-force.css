@@ -213,7 +213,7 @@ app-gestao-documentos .search-input-wrapper input,
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* FORÇA ÍCONE DE BUSCA */
+/* FORÇA ÍCONE DE BUSCA - REMOVIDO PARA EVITAR CONFLITOS
 .search-icon,
 app-gestao-documentos .search-icon,
 .documents-hub .search-icon {
@@ -225,6 +225,7 @@ app-gestao-documentos .search-icon,
   font-size: 1.4rem !important;
   z-index: 1001 !important;
 }
+*/
 
 /* FORÇA MÁXIMA - RESET TOTAL DE ESTILOS CONFLITANTES */
 * {

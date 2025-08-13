@@ -330,7 +330,7 @@ app-gestao-documentos .search-input-wrapper input {
   min-height: 60px !important;
 }
 
-app-gestao-documentos .search-icon {
+/* app-gestao-documentos .search-icon {
   position: absolute !important;
   left: 1.75rem !important;
   top: 50% !important;
@@ -338,4 +338,4 @@ app-gestao-documentos .search-icon {
   z-index: 3 !important;
   color: rgba(255, 255, 255, 0.6) !important;
   font-size: 1.2rem !important;
-}
+} */

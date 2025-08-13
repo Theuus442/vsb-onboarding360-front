@@ -52,18 +52,69 @@ import { ButtonModule } from 'primeng/button';
       align-items: center;
       gap: 0.5rem;
     }
-    
-    .p-input-icon-right .pi-times {
-      right: 2.5rem;
-      color: #6b7280;
+
+    .p-input-icon-left .pi-search {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1rem;
+      left: 1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
+    .p-input-icon-left:focus-within .pi-search {
+      color: #667eea;
+      transform: scale(1.05);
+    }
+
+    .p-input-icon-right .pi-times {
+      right: 2.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      padding: 0.125rem;
+      border-radius: 0.25rem;
+    }
+
     .p-input-icon-right .pi-times:hover {
       color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      transform: scale(1.1);
     }
-    
+
     .p-inputtext {
       width: 100%;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: #ffffff !important;
+      padding: 1rem 3rem 1rem 2.75rem !important;
+    }
+
+    .p-inputtext:focus {
+      outline: none !important;
+      border-color: #667eea !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+    }
+
+    .p-inputtext::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .p-button-outlined {
+      background: rgba(102, 126, 234, 0.1) !important;
+      border: 1px solid rgba(102, 126, 234, 0.3) !important;
+      color: #667eea !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .p-button-outlined:hover {
+      background: rgba(102, 126, 234, 0.2) !important;
+      border-color: #667eea !important;
+      transform: translateY(-1px);
+    }
+
+    .p-button-outlined:focus {
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
     }
   `]
 })
